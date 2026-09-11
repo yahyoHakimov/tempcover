@@ -22,6 +22,18 @@ drivers receive their documents by email and view them in a self-service portal.
 
 ## Local development
 
+Quickest way — one command starts the database (Docker), backend and frontend, seeds the super admin and opens the browser:
+
+```bash
+./run.sh            # start everything → http://localhost:3001/admin/login
+./run.sh stop       # stop backend + frontend
+./run.sh status     # what is running
+./run.sh logs       # tail backend + frontend logs
+./run.sh reset      # stop and delete the local database
+```
+
+Manual steps, if you prefer:
+
 ```bash
 # 1. Database (any PostgreSQL 15+; this uses Docker on port 5434)
 docker run -d --name tempcover_db_dev -e POSTGRES_USER=tempcover -e POSTGRES_PASSWORD=tempcover \

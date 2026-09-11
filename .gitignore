@@ -23,3 +23,7 @@ frontend/dist/
 *.log
 .idea/
 .vscode/
+
+# local runner state
+.run/
+logs/
