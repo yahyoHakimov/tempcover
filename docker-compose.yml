@@ -1,0 +1,68 @@
+# TempCover — production stack.
+# The public HTTPS gateway (nginx) is shared with the other projects on the server;
+# it reaches these containers by name over the external "proxy" network.
+# See nginx/tempcover-verify.com.conf for the server block to add to that gateway.
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: tempcover_db
+    environment:
+      POSTGRES_USER: tempcover
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tempcover}
+      POSTGRES_DB: tempcover
+    volumes:
+      - tempcover_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tempcover"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    image: ghcr.io/yahyohakimov/tempcover-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tempcover_backend
+    expose:
+      - "8000"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend/static:/app/static
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - default
+      - proxy
+    restart: unless-stopped
+
+  frontend:
+    image: ghcr.io/yahyohakimov/tempcover-frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: tempcover_frontend
+    expose:
+      - "3000"
+    environment:
+      - NODE_ENV=production
+      # Empty = same-origin (/api is routed by the gateway), so a domain change needs no rebuild
+      - NUXT_PUBLIC_API_BASE=
+    depends_on:
+      - backend
+    networks:
+      - default
+      - proxy
+    restart: unless-stopped
+
+volumes:
+  tempcover_pgdata:
+
+networks:
+  default:
+  proxy:
+    external: true

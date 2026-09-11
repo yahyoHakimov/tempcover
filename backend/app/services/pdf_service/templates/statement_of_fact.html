@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @page {
+    size: A4;
+    margin: 15mm 18mm 18mm 18mm;
+  }
+
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 9.5pt;
+    color: #000;
+    background: white;
+  }
+
+  .page-break { page-break-before: always; }
+
+  /* ── Page header ── */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1.5px solid #000;
+    padding-bottom: 3mm;
+    margin-bottom: 6mm;
+  }
+
+  .page-header-title {
+    font-size: 12pt;
+    font-weight: 700;
+  }
+
+  /* ── Page 1 ── */
+  .sof-box {
+    border: 1px solid #ccc;
+    padding: 5mm 6mm;
+  }
+
+  .section-heading {
+    font-weight: 700;
+    font-style: italic;
+    font-size: 9.5pt;
+    margin-top: 5mm;
+    margin-bottom: 2mm;
+  }
+
+  .section-heading:first-child { margin-top: 0; }
+
+  .field-row {
+    display: flex;
+    margin-bottom: 2mm;
+    align-items: baseline;
+  }
+
+  .field-label {
+    font-weight: 700;
+    font-size: 9.5pt;
+    min-width: 70mm;
+    flex-shrink: 0;
+  }
+
+  .field-value { font-size: 9.5pt; }
+
+  .field-value-para {
+    font-size: 9.5pt;
+    line-height: 1.5;
+  }
+
+  .important-banner {
+    background: #000;
+    color: #fff;
+    font-weight: 700;
+    font-size: 8.5pt;
+    padding: 2.5mm 4mm;
+    margin-top: 5mm;
+  }
+
+  .page-footer {
+    margin-top: 8mm;
+    text-align: center;
+    font-size: 8pt;
+    color: #333;
+  }
+
+  /* ── Page 2 ── */
+  .declaration-intro {
+    font-weight: 700;
+    font-size: 9.5pt;
+    margin-bottom: 3mm;
+  }
+
+  .alpha-list {
+    list-style: none;
+    margin: 0 0 5mm 0;
+    padding: 0;
+  }
+
+  .alpha-list li {
+    display: flex;
+    margin-bottom: 2mm;
+    font-size: 9.5pt;
+    line-height: 1.5;
+    text-align: justify;
+  }
+
+  .alpha-marker {
+    font-size: 8pt;
+    font-weight: 700;
+    min-width: 8mm;
+    padding-top: 0.5mm;
+    flex-shrink: 0;
+  }
+
+  .bold-para {
+    font-weight: 700;
+    font-size: 9.5pt;
+    line-height: 1.5;
+    margin-bottom: 4mm;
+    text-align: justify;
+  }
+
+  /* ── Page 3 ── */
+  .warning-block {
+    font-size: 9.5pt;
+    line-height: 1.5;
+    margin-bottom: 4mm;
+    text-align: justify;
+  }
+
+  .roman-list {
+    list-style: none;
+    margin: 2mm 0 4mm 8mm;
+    padding: 0;
+  }
+
+  .roman-list li {
+    display: flex;
+    font-size: 9.5pt;
+    line-height: 1.5;
+    margin-bottom: 1.5mm;
+  }
+
+  .roman-marker {
+    min-width: 8mm;
+    flex-shrink: 0;
+    font-size: 8pt;
+    padding-top: 0.5mm;
+  }
+
+  .section-subheading {
+    font-weight: 700;
+    font-size: 9.5pt;
+    margin-top: 5mm;
+    margin-bottom: 2mm;
+  }
+
+  .normal-para {
+    font-size: 9.5pt;
+    line-height: 1.5;
+    margin-bottom: 4mm;
+    text-align: justify;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     PAGE 1 — STATEMENT OF FACT
+══════════════════════════════════════ -->
+
+<div class="page-header">
+  <div class="page-header-title">STATEMENT OF FACT - Short Term Insurance</div>
+  <img src="{{ logo_path }}" alt="TempCover" style="height: 28px;" />
+</div>
+
+<div class="sof-box">
+
+  <div class="section-heading">Your Agent</div>
+  <div class="field-row">
+    <span class="field-label">Agent</span>
+    <span class="field-value">Tempcover Limited</span>
+  </div>
+
+  <div class="section-heading">Your Details - Name/Address</div>
+  <div class="field-row">
+    <span class="field-label">Surname</span>
+    <span class="field-value">{{ surname }}</span>
+  </div>
+  <div class="field-row">
+    <span class="field-label">Forename(s)</span>
+    <span class="field-value">{{ forenames }}</span>
+  </div>
+  <div class="field-row">
+    <span class="field-label">Address</span>
+    <span class="field-value">{{ address }}</span>
+  </div>
+  <div class="field-row">
+    <span class="field-label">Telephone number</span>
+    <span class="field-value">{{ telephone }}</span>
+  </div>
+  <div class="field-row">
+    <span class="field-label">Email address</span>
+    <span class="field-value">{{ email }}</span>
+  </div>
+
+  <div class="section-heading">Your Policy Cover</div>
+  <div class="field-row">
+    <span class="field-label">Effective Date</span>
+    <span class="field-value">{{ effective_date }}</span>
+  </div>
+  <div class="field-row">
+    <span class="field-label">Expiry Date</span>
+    <span class="field-value">{{ expiry_date }}</span>
+  </div>
+  <div class="field-row">
+    <span class="field-label">Policy Cover</span>
+    <span class="field-value">{{ policy_cover }}</span>
+  </div>
+  <div class="field-row">
+    <span class="field-label">Number of Drivers (including you)</span>
+    <span class="field-value">{{ number_of_drivers }}</span>
+  </div>
+  <div class="field-row" style="align-items: flex-start;">
+    <span class="field-label">Class of Use</span>
+    <span class="field-value-para">Use for social domestic and pleasure purposes and use in person by the
+    Policyholder in connection with their business or profession EXCLUDING use
+    for hire or reward, racing, pacemaking, speed testing, commercial travelling or
+    use for any purpose in connection with the motor trade.</span>
+  </div>
+
+  <div class="section-heading">Driver Details</div>
+  <div class="field-row">
+    <span class="field-label">Full Name</span>
+    <span class="field-value">{{ driver_full_name }}</span>
+  </div>
+  <div class="field-row">
+    <span class="field-label">Sex</span>
+    <span class="field-value">{{ driver_sex }}</span>
+  </div>
+  <div class="field-row">
+    <span class="field-label">Date of birth</span>
+    <span class="field-value">{{ driver_dob }}</span>
+  </div>
+  <div class="field-row">
+    <span class="field-label">Licence Type</span>
+    <span class="field-value">{{ driver_licence_type }}</span>
+  </div>
+  <div class="field-row">
+    <span class="field-label">Occupation</span>
+    <span class="field-value">{{ driver_occupation }}</span>
+  </div>
+
+  <div class="section-heading">Vehicle Details</div>
+  <div class="field-row">
+    <span class="field-label">Make</span>
+    <span class="field-value">{{ vehicle_make }}</span>
+  </div>
+  <div class="field-row">
+    <span class="field-label">Model</span>
+    <span class="field-value">{{ vehicle_model }}</span>
+  </div>
+  <div class="field-row">
+    <span class="field-label">Registration number</span>
+    <span class="field-value">{{ vehicle_registration }}</span>
+  </div>
+  <div class="field-row">
+    <span class="field-label">Vehicle Value</span>
+    <span class="field-value">{{ vehicle_value }}</span>
+  </div>
+
+</div>
+
+<div class="important-banner">
+  IMPORTANT - You also must read the First Underwriting Insurance Proposer Declaration &amp; Important Notes on Pages 2 &amp; 3
+</div>
+
+<div class="page-footer">
+  First Underwriting Ltd, The Gorkin, 30 St Mary Axe, London, EC3A 8EP
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PAGE 2 — PROPOSER DECLARATION
+══════════════════════════════════════ -->
+<div class="page-break"></div>
+
+<div class="page-header">
+  <div class="page-header-title">First Underwriting / PROPOSER DECLARATION</div>
+  <img src="{{ logo_path }}" alt="TempCover" style="height: 28px;" />
+</div>
+
+<div class="declaration-intro">I declare that I, or any named driver:</div>
+
+<ul class="alpha-list">
+  <li><span class="alpha-marker">a.</span><span>Have been a permanent UK resident for at least 12 months.</span></li>
+  <li><span class="alpha-marker">b.</span><span>Have a current and valid driving licence with no more than 6 penalty points for motoring convictions in the last 3 years, and have no prosecution or police enquiry pending.</span></li>
+  <li><span class="alpha-marker">c.</span><span>Have no more than 2 fault accidents/losses/claims within the last 3 years (a pending claim or non-recoverable claim is considered a fault claim).</span></li>
+  <li><span class="alpha-marker">d.</span><span>Have not been disqualified from driving in the last 5 years.</span></li>
+  <li><span class="alpha-marker">e.</span><span>Have no criminal convictions, a current Anti-Social Behaviour Order (ASBO) or a Criminal Behaviour Order (CBO).</span></li>
+  <li><span class="alpha-marker">f.</span><span>Have not had a motor insurance policy cancelled or voided by an insurance company in the past 3 years.</span></li>
+  <li><span class="alpha-marker">g.</span><span>Have not been employed or work within the motor trade, fast food delivery, parcel delivery, taxi or chauffeur industries or are currently unemployed.</span></li>
+</ul>
+
+<div class="declaration-intro">I declare that the vehicle:</div>
+
+<ul class="alpha-list">
+  <li><span class="alpha-marker">a.</span><span>Will only be used for social, domestic and pleasure purposes or in person by you in connection with your business.</span></li>
+  <li><span class="alpha-marker">b.</span><span>Will not be used for hire or reward, racing, pace-making, speed testing, commercial travelling or use for any purpose in relation to the motor trade.</span></li>
+  <li><span class="alpha-marker">c.</span><span>Will not be used to carry hazardous goods or be driven at a hazardous location.</span></li>
+  <li><span class="alpha-marker">d.</span><span>Has not been modified, has no more than 7 seats in total and is right-hand drive only.</span></li>
+  <li><span class="alpha-marker">e.</span><span>Is registered in Great Britain, Northern Ireland or the Isle of Man.</span></li>
+  <li><span class="alpha-marker">f.</span><span>Has a minimum value of £1,500 and I am aware that the maximum amount payable under this policy in respect of loss of or damage to the vehicle insured is £65,000.</span></li>
+  <li><span class="alpha-marker">g.</span><span>Will be in the UK at the start of the policy and will not be exported from the UK during the duration of the policy.</span></li>
+</ul>
+
+<div class="bold-para">I am aware that temporary insurance cannot be used for Hire or Loan Vehicles (i.e. Vehicle Rentals, Vehicle Salvage/Recovery Agents, Credit Hire Vehicles/Companies and Accident Management Companies).</div>
+<div class="bold-para">I declare that the Certificate of Motor Insurance and any other document will not be used as evidence of insurance for the release of a vehicle impounded by the Police or Local Authority.</div>
+<div class="bold-para">I am aware that foreign use is not permitted for any demonstrator vehicle or courtesy car.</div>
+<div class="bold-para">I am aware that this policy has a total excess in respect of Accidental Damage, Malicious Damage, Fire and Theft claims which is displayed within my Policy Schedule.</div>
+
+<div class="page-footer">
+  First Underwriting Ltd, The Gorkin, 30 St Mary Axe, London, EC3A 8EP
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PAGE 3 — IMPORTANT NOTES
+══════════════════════════════════════ -->
+<div class="page-break"></div>
+
+<div class="page-header">
+  <div class="page-header-title">IMPORTANT NOTES</div>
+  <img src="{{ logo_path }}" alt="TempCover" style="height: 28px;" />
+</div>
+
+<div class="warning-block">
+  <strong>WARNING:</strong> No cover attaches until a Cover Note or Certificate of Motor Insurance has been issued by the Insurer or by their authorised agent on their behalf. If it is an offence to make a false statement or to withhold any material information to obtain the issue of a Certificate of Motor Insurance. If you are in doubt about facts considered material you should disclose them. The Insurer reserves the right to decline any proposal or apply special terms. The Insurer reserves the right to establish the milometer (odometer) reading.
+</div>
+
+<div class="warning-block">
+  <strong>Claims and Underwriting Exchange:</strong> Insurers pass information to the Claims and Underwriting Register, run by Insurance Database Services (IDS Ltd). The aim is to help us check information provided and also to prevent fraudulent claims. When we deal with your request for insurance, we may search the register. When you tell us about an incident which may or may not give rise to a claim, we will pass information relating to it to the register. You should show this notice to anyone who has an interest in vehicle insured under the policy.
+</div>
+
+<div class="warning-block">
+  <strong>Motor Insurance Anti-Fraud and Theft Register:</strong> Insurers pass information to the Motor Insurance Anti-Fraud and Theft Register, run by the Association of British Insurers (ABI). The aim is to help us check information provided and also to prevent fraudulent claims. When we deal with your request for insurance, we may search the register. Under the conditions of your policy, you must tell us about any incident (such as accident or theft) which may or may not give rise to a claim. When you tell us about an incident, we will pass information relating to it to the register.
+</div>
+
+<div class="warning-block">
+  <strong>Motor Insurance Database - Continuous Insurance Enforcement:</strong> Information relating to your policy will be added to the Motor Insurance Database ('MID') managed by the Motor Insurance Bureau ('MIB'). MID and the data stored on it may be used by certain statutory and/or authorised bodies including the Police, the DVLA, the DVLNI, the Insurance Fraud Bureau and other bodies permitted by law for purposes not limited to but including:
+</div>
+
+<ul class="roman-list">
+  <li><span class="roman-marker">i.</span><span>Electronic (Licensing)</span></li>
+  <li><span class="roman-marker">ii.</span><span>Continuous Insurance Enforcement</span></li>
+  <li><span class="roman-marker">iii.</span><span>Law enforcement (prevention, detection, apprehension and or prosecution of offenders)</span></li>
+  <li><span class="roman-marker">iv.</span><span>The provision of government Mulsannes and or other Miscellaneous and aimed at reducing the level and incidence of uninsured driving.</span></li>
+</ul>
+
+<div class="normal-para">If you are involved in a road traffic accident (either in the UK, EEA or certain other territories), insurers and or the MIB may search the MID to obtain relevant information. Persons (including his or her appointed representatives) pursuing a claim in respect of a road traffic accident (including citizens of other countries) may also obtain information which is held on the MID. It is vital that the MID holds your correct registration number. If it is incorrectly shown on MID you are at risk of having your vehicle seized by the Police. You can check that your correct registration number details are shown on the MID at <strong>www.askmid.com</strong>. You should show this notice to anyone insured to drive the vehicle covered under the Policy.</div>
+
+<div class="section-subheading">DECLARATION</div>
+
+<div class="normal-para">I declare that the information provided during the quotation process, I declare that to the best of my knowledge and belief all statements and answers in the proposal are true and correct. I understand that it is my duty to take reasonable care not to make a misrepresentation of information which will influence and/or assessment of the proposal and that due to the short term nature of the policy, changes and additions cannot be made once the policy has been taken out.</div>
+
+<div class="normal-para">I agree that this Proposal and Declaration shall form the basis of the contract between me and the Insurer and that if any answer has been written by any other person, such person shall be deemed to be my agent for that purpose. A copy of this completed Statement of Fact will be provided as an attachment in the Confirmation Email sent following the purchase of the policy, or by post if requested during the quotation process. You should keep a record (including copies of letters) of all information supplied to us for the purpose of entering into this contract. A specimen policy is available on request.</div>
+
+<div class="section-subheading">IN THE EVENT OF A COMPLAINT</div>
+
+<div class="normal-para">We strive to provide an excellent service to all our customers but occasionally things can go wrong. We take all complaints seriously and endeavour to resolve all customers' problems promptly. If you have a question about this insurance or complaint about your broker, you should contact your broker. If your complaint is in relation to this insurance or a claim you should contact Us as follows: in writing - Tom Donachie, Managing Director, First Underwriting Ltd, The Gorkin, 30 St Mary Axe, London, EC3A 8EP.</div>
+
+<div class="normal-para">We will make every effort to resolve your complaint immediately. If we cannot resolve your complaint by the end of the next working day, we will acknowledge your complaint within five (5) days of receipt and will do our best to resolve the problem within four (4) weeks by sending you a final response letter. If we are unable to resolve your complaint in this timeframe we will send you a further update within eight (8) weeks of the original complaint.</div>
+
+<div class="important-banner">
+  IMPORTANT - You also must read the First Underwriting Insurance Proposer Declaration &amp; Important Notes on Pages 2 &amp; 3
+</div>
+
+</body>
+</html>

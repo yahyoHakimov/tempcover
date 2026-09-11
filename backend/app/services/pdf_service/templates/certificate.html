@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @page {
+    size: A4;
+    margin: 10mm 12mm 10mm 12mm;
+  }
+
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8pt;
+    color: #000;
+    background: white;
+    padding: 5mm 8mm 5mm 8mm;
+  }
+
+  /* ── Top bar: date of issue right-aligned ── */
+  .top-bar {
+    text-align: right;
+    font-size: 8pt;
+    margin-bottom: 2mm;
+  }
+
+  /* ── Logo row ── */
+  .logo-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 2mm;
+  }
+
+  /* ── Main bordered table ── */
+  .cert-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1.5px solid #000;
+    margin-bottom: 2mm;
+  }
+
+  .cert-table td {
+    border: 1.5px solid #000;
+    padding: 1.5mm 2.5mm;
+    vertical-align: top;
+    font-size: 8pt;
+    line-height: 1.3;
+  }
+
+  .cert-table td.label {
+    font-weight: 700;
+    width: 52mm;
+    white-space: nowrap;
+  }
+
+  .cert-table .title-cell {
+    text-align: center;
+    font-size: 14pt;
+    font-weight: 700;
+    padding: 2.5mm 3mm;
+  }
+
+  .cert-table .cert-num-row td {
+    border-bottom: 1.5px solid #000;
+  }
+
+  .cert-num-left {
+    font-weight: 700;
+    font-size: 8pt;
+  }
+
+  /* ── Section 6 sub-items ── */
+  .use-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .use-list li {
+    margin-bottom: 1mm;
+    font-size: 8pt;
+    line-height: 1.3;
+  }
+
+  /* ── Signature block ── */
+  .signatures {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4mm;
+  }
+
+  .sig-block { width: 45%; text-align: right; }
+
+  .sig-image {
+    height: 12mm;
+    margin-bottom: 2mm;
+  }
+
+  .sig-image img { height: 14mm; }
+
+  .sig-name { font-weight: 700; font-size: 8pt; }
+  .sig-title { font-size: 8pt; }
+
+  /* ── Page 2 ── */
+  .page-break {
+    page-break-before: always;
+  }
+
+  .notes-page {
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  .notes-page-title {
+    font-weight: 700;
+    font-size: 8.5pt;
+    text-decoration: underline;
+    margin-bottom: 2mm;
+  }
+
+  .notes-page ul {
+    margin: 0 0 0 5mm;
+    padding: 0;
+    list-style: disc;
+  }
+
+  .notes-page ul li {
+    font-size: 8pt;
+    line-height: 1.3;
+    margin-bottom: 3.5mm;
+    text-align: justify;
+  }
+
+  .footer-page2 {
+    margin-top: 6mm;
+    font-size: 7pt;
+    color: #000;
+    line-height: 1.3;
+    text-align: left;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     PAGE 1 — CERTIFICATE
+══════════════════════════════════════ -->
+
+<!-- Date of issue (top right) -->
+<!-- Logo (top right) -->
+<div class="logo-row">
+  <img src="{{ logo_path }}"
+       alt="TempCover"
+       style="height: 48px;" />
+</div>
+<div class="top-bar">Date of issue: {{ date_of_issue }}</div>
+
+<!-- Main certificate table -->
+<table class="cert-table">
+
+  <!-- Title row -->
+  <tr>
+    <td class="title-cell" colspan="2">Certificate of Motor Insurance</td>
+  </tr>
+
+  <!-- Certificate number row -->
+  <tr class="cert-num-row">
+    <td class="label cert-num-left">Certificate number:</td>
+    <td>{{ policy_number }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ policy_suffix }}</td>
+  </tr>
+
+  <!-- Row 1: Registration -->
+  <tr>
+    <td class="label">1. Registration mark of vehicle:</td>
+    <td>
+      a) {{ vehicle_registration }} – {{ vehicle_description }}<br><br>
+      b) Any motor car supplied to the policyholder under the courtesy car option (Section J) of this policy or any motor car supplied to the policyholder under an agreement between the insurers and a recommended repairer while the car described above is being repaired by that repairer as a direct result of damage covered by this policy.
+    </td>
+  </tr>
+
+  <!-- Row 2: Policyholder name -->
+  <tr>
+    <td class="label">2. Name of policyholder:</td>
+    <td>{{ insured_name }}</td>
+  </tr>
+
+  <!-- Row 3: Effective date -->
+  <tr>
+    <td class="label">3. Effective date of the<br>relevant law:</td>
+    <td>{{ effective_datetime }} <strong>commencement of insurance for the purposes of the relevant law:</strong></td>
+  </tr>
+
+  <!-- Row 4: Expiry date -->
+  <tr>
+    <td class="label">4. Date of expiry of insurance:</td>
+    <td>{{ expiry_datetime }}</td>
+  </tr>
+
+  <!-- Row 5: Persons entitled to drive -->
+  <tr>
+    <td class="label">5. Persons or classes of</td>
+    <td>
+      {{ insured_name }} <strong>persons entitled to drive:</strong><br><br>
+      Provided the person driving holds a licence to drive the car or has held and is not disqualified from holding or obtaining such a licence.<br>
+      The policyholder only may also drive a car not owned by them or hired to them under a hire purchase agreement, rental or short term hire agreement or annual leasing agreement and which is not used in connection with the motor trade provided:<br><br>
+      &bull;&nbsp;The owner of the car has valid insurance in force on that car which does not cover the policyholder on this policy to drive that car.<br>
+      &bull;&nbsp;The owner of the car has given the policyholder permission to drive it.<br>
+      &bull;&nbsp;The car is being driven in Great Britain, Northern Ireland, the Channel Islands or the Isle of Man.<br>
+      &bull;&nbsp;The car is used within the limitations of use shown below.
+    </td>
+  </tr>
+
+  <!-- Row 6: Limitations -->
+  <tr>
+    <td class="label">6. Limitations as to use:</td>
+    <td>
+      <ul class="use-list">
+        <li>a) Use for social domestic and pleasure purposes.</li>
+        <li>b) This policy does not cover use for commercial travelling.</li>
+        <li>c) This policy does not cover use on the Nurburgring Nordschleife, racing, competitions, speed testing, rallies, track days, 4x4 off road events or trials, any purpose in connection with the motor trade, hiring or carrying of passengers for profit.</li>
+        <li>d) This policy may not be used to secure the release of a motor vehicle other than the vehicle identified above by its registration mark, which has been seized by or on behalf of any government or public authority.</li>
+        <li>e) This policy does not cover use for any business purposes.</li>
+      </ul>
+    </td>
+  </tr>
+
+  <!-- Certify row -->
+  <tr>
+    <td colspan="2" style="padding: 2mm; font-size:9pt; line-height:1.5;">
+      We hereby certify that the policy to which this certificate relates satisfies the requirements of the relevant law applicable in
+      Great Britain, Northern Ireland, the Isle of Man, the Islands of Guernsey, Jersey and Alderney.
+    </td>
+  </tr>
+
+</table>
+
+<!-- Signature block (right-aligned, outside table) -->
+<div class="signatures">
+  <div class="sig-block">
+    <div class="sig-image">
+      <img src="{{ sign_path }}" alt="Signature" />
+    </div>
+    <div class="sig-name">Authorised Signatory</div>
+    <div class="sig-title">For and on behalf of TempCover Ltd</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PAGE 2 — IMPORTANT NOTES
+══════════════════════════════════════ -->
+<div class="page-break"></div>
+
+<div class="notes-page">
+  <div class="notes-page-title">Important Notes</div>
+  <ul>
+    <li>This certificate gives evidence of insurance cover to comply with the law. For full details of the cover, reference should also be made to the policy wording and schedule.</li>
+    <li>Unless stated otherwise in paragraph 5 above this policy does not cover the policyholder to drive any car other than those listed in paragraphs 1a and 1b. If paragraph 5 allows the policyholder to drive a car not belonging or hired to them cover will be limited to Third Party only. There is no cover for loss or damage to the car being driven.</li>
+    <li>This certificate of motor insurance takes the place of an International Motor Insurance Card(green card) and is evidence that the insurance extends to include the compulsory motor insurance requirements of any member country of the European Union, Andorra, Bosnia-Herzegovina, Iceland, Liechtenstein, Montenegro, Norway, Serbia and Switzerland.</li>
+    <li>Advice to third parties: Nothing in this certificate affects your right as a third party to make a claim.</li>
+  </ul>
+</div>
+
+<div class="footer-page2">
+  TempCover and tempcover-verify.com are trading names of TempCover Ltd. TempCover general insurance policies are underwritten by the insurer named in your policy schedule, which is authorised by the Prudential Regulation Authority and regulated by the Financial Conduct Authority and the Prudential Regulation Authority. TempCover Ltd is registered in England and Wales and is authorised and regulated by the Financial Conduct Authority.
+</div>
+
+</body>
+</html>
