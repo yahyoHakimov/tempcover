@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     # Email (Brevo). Empty key = dev mode: emails are printed to the log.
     BREVO_API_KEY: str = ""
     FROM_EMAIL: str = "noreply@tempcover-verify.com"
-    FROM_NAME: str = "TempCover Insurance"
+    FROM_NAME: str = "Tempcover"
     SUPPORT_EMAIL: str = "support@tempcover-verify.com"
 
     # App
@@ -32,12 +32,14 @@ class Settings(BaseSettings):
 
     # Brand / legal identity — printed in email footers and PDF footers.
     # Leave a value blank to omit that line entirely (nothing is invented).
-    TRADING_NAME: str = "TempCover"
-    COMPANY_LEGAL_NAME: str = "TempCover Ltd"
-    COMPANY_REG_NO: str = ""
-    REGISTERED_OFFICE: str = ""
-    FCA_FRN: str = ""
-    UNDERWRITER_NAME: str = ""
+    # Standart qiymatlar asl Tempcover tasdiqlash xatidan olingan.
+    SITE_NAME: str = "tempcover.com"          # "Thanks for choosing tempcover.com", banner, mavzu
+    TRADING_NAME: str = "Tempcover"
+    COMPANY_LEGAL_NAME: str = "Tempcover Ltd"
+    COMPANY_REG_NO: str = "9923259"
+    REGISTERED_OFFICE: str = "2nd Floor Admiral House, Harlington Way, Fleet, Hampshire, GU51 4BB"
+    FCA_FRN: str = "746985"
+    UNDERWRITER_NAME: str = "First Underwriting"
     UNDERWRITER_FRN: str = ""
     POLICY_NUMBER_PREFIX: str = "TCV-MOT-"
 

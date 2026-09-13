@@ -123,6 +123,7 @@ Required repository secrets: `DO_HOST`, `DO_USERNAME`, `DO_SSH_KEY`.
 
 ## Branding
 
-Logo PNGs live in `frontend/public/` (web + emails) and
+Logo PNGs live in `frontend/public/` (web + emails; the confirmation email uses
+`tempcover-logo-dark.png` and `trustpilot.png`, both taken from the original Tempcover email) and
 `backend/app/services/pdf_service/signatures/` (PDFs). Colours are CSS variables in
 `frontend/app/assets/css/main.css` (`--brand-500: #FF5100`).
