@@ -99,27 +99,37 @@ Frontend: `NUXT_PUBLIC_API_BASE` — leave empty in production (same-origin `/ap
 The stack runs at `/opt/tempcover` next to the other projects and is reached through the
 server's shared nginx gateway over the external `proxy` Docker network.
 
+### Deploys (CI/CD — `.github/workflows/ci.yml`)
+
+Every push to `main`:
+
+1. **Backend** — real Postgres: `alembic upgrade head`, `seed.py` twice (must be idempotent),
+   then `tests/ci_smoke.py` generates the three PDFs (2 / 1 / 3 pages) and the confirmation email.
+2. **Frontend** — `npm ci && npm run build`.
+3. **Build & push** both images to `ghcr.io/yahyohakimov/tempcover-{backend,frontend}` (`latest` + sha).
+4. **Deploy** over SSH: clones the repo into `/opt/tempcover` on the first run (works for a private
+   repo — the run's `GITHUB_TOKEN` is used only inside the command, never stored), keeps
+   `backend/.env`, creates the `proxy` network if missing, pulls the images, `docker compose up -d`,
+   runs `seed.py`, and fails the run if `/health` does not answer.
+
+Pull requests run steps 1–2 only. Required repository secrets: `DO_HOST`, `DO_USERNAME`, `DO_SSH_KEY`.
+
+### First deploy
+
+Nothing to clone by hand — push to `main`, then on the server:
+
 ```bash
-# on the server, once
-git clone <repo> /opt/tempcover && cd /opt/tempcover
-cp backend/.env.example backend/.env && nano backend/.env     # real secrets, APP_URL=https://tempcover-verify.com
-docker network inspect proxy >/dev/null 2>&1 || docker network create proxy
-docker compose up -d
+cd /opt/tempcover
+nano backend/.env          # created from .env.example by the first deploy: set SECRET_KEY,
+                           # SEED_SUPERADMIN_PASSWORD, BREVO_API_KEY (APP_URL/CORS are prefilled)
+docker compose up -d       # restart with the real values
 docker compose exec backend python seed.py
 
-# gateway: add nginx/tempcover-verify.com.conf as a server block to the shared nginx.conf
+# gateway: add nginx/tempcover-verify.com.conf as a server block to the shared nginx
 #   (the swiftshield repo — commit it there, its deploys hard-reset the working tree),
 #   issue the certificate first:
 certbot certonly --webroot -w /var/www/letsencrypt -d tempcover-verify.com -d www.tempcover-verify.com
 ```
-
-### Deploys
-
-Push to `main` → GitHub Actions builds both images on the runner, pushes them to
-`ghcr.io/yahyohakimov/tempcover-{backend,frontend}`, then SSHes in and runs
-`git reset --hard` + `docker compose pull` + `up -d` (no builds on the server).
-Required repository secrets: `DO_HOST`, `DO_USERNAME`, `DO_SSH_KEY`.
-`backend/.env` on the server is preserved across deploys by the workflow.
 
 ## Branding
 
