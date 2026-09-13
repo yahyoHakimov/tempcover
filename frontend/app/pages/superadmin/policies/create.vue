@@ -34,6 +34,7 @@
           <div class="field"><label>First Name *</label><input v-model="driver.first_name" type="text" placeholder="John" /></div>
           <div class="field"><label>Last Name *</label><input v-model="driver.last_name" type="text" placeholder="Smith" /></div>
           <div class="field"><label>Date of Birth *</label><input v-model="driver.date_of_birth" type="date" /></div>
+          <div class="field"><label>Sex *</label><select v-model="driver.sex"><option value="">Select…</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
           <div class="field"><label>Driving Licence *</label><input v-model="driver.driving_licence" type="text" /></div>
           <div class="field"><label>Mobile *</label><input v-model="driver.mobile" type="tel" /></div>
           <div class="field"><label>Email *</label><input v-model="driver.email" type="email" /></div>
@@ -124,7 +125,7 @@ const selectedDriverObj  = ref(null)
 const selectedVehicleObj = ref(null)
 const toast = ref({ show: false, message: '', type: 'success' })
 
-const driver = ref({ first_name:'', last_name:'', date_of_birth:'', driving_licence:'', mobile:'', email:'', address_line_1:'', city:'', postcode:'', occupation:'' })
+const driver = ref({ first_name:'', last_name:'', date_of_birth:'', driving_licence:'', mobile:'', email:'', address_line_1:'', city:'', postcode:'', occupation:'', sex:'' })
 const vehicle = ref({ registration:'', make:'', model:'', year:'', value_range:'' })
 const policy = ref({ start_date:'', start_time:'', end_date:'', end_time:'', price:'' })
 

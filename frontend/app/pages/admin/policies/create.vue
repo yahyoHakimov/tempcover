@@ -38,6 +38,7 @@
           <div class="g-field"><label>First name *</label><input v-model.trim="driver.first_name" type="text" placeholder="John" /></div>
           <div class="g-field"><label>Last name *</label><input v-model.trim="driver.last_name" type="text" placeholder="Smith" /></div>
           <div class="g-field"><label>Date of birth *</label><input v-model="driver.date_of_birth" type="date" /></div>
+          <div class="g-field"><label>Sex *</label><select v-model="driver.sex"><option value="">Select…</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
           <div class="g-field"><label>Driving licence no. *</label><input v-model.trim="driver.driving_licence" type="text" placeholder="SMITH901201AB9CD" /></div>
           <div class="g-field"><label>Mobile *</label><input v-model.trim="driver.mobile" type="tel" placeholder="+44 7700 900000" /></div>
           <div class="g-field"><label>Email *</label><input v-model.trim="driver.email" type="email" placeholder="john@example.com" /></div>
@@ -179,7 +180,7 @@ const selectedDriverObj  = ref(null)
 const selectedVehicleObj = ref(null)
 const toast = ref({ show: false, message: '', type: 'success' })
 
-const emptyDriver  = () => ({ first_name:'', last_name:'', date_of_birth:'', driving_licence:'', mobile:'', email:'', address_line_1:'', address_line_2:'', city:'', postcode:'', occupation:'' })
+const emptyDriver  = () => ({ first_name:'', last_name:'', date_of_birth:'', driving_licence:'', mobile:'', email:'', address_line_1:'', address_line_2:'', city:'', postcode:'', occupation:'', sex:'' })
 const emptyVehicle = () => ({ registration:'', make:'', model:'', year:'', color:'', value_range:'' })
 
 const driver  = ref(emptyDriver())
@@ -248,7 +249,7 @@ function clearVehicle() {
   selectedVehicleObj.value = null
 }
 
-const REQUIRED_DRIVER = ['first_name', 'last_name', 'date_of_birth', 'driving_licence', 'mobile', 'email', 'address_line_1', 'city', 'postcode', 'occupation']
+const REQUIRED_DRIVER = ['first_name', 'last_name', 'date_of_birth', 'driving_licence', 'mobile', 'email', 'address_line_1', 'city', 'postcode', 'occupation', 'sex']
 
 async function saveDriver() {
   const missing = REQUIRED_DRIVER.filter(k => !driver.value[k])

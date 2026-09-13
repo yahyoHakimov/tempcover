@@ -61,6 +61,7 @@ class PDFService:
             driver_dob           = dob_str,
             driver_licence_type  = "Full UK licence",
             driver_occupation    = getattr(driver, "occupation", "") or "",
+            driver_sex           = getattr(driver, "sex", "") or "—",
             policy_cover         = cover_label(policy.cover_type),
             agent_name           = policy.tenant.name if getattr(policy, "tenant", None) else "",
             version              = policy.version or 1,

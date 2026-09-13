@@ -94,6 +94,7 @@ class DriverCreate(BaseModel):
     city: str
     postcode: str
     occupation: str
+    sex: Optional[str] = None
 
 
 class VehicleCreate(BaseModel):
@@ -296,6 +297,7 @@ def get_all_drivers(
             "city":            d.city,
             "postcode":        d.postcode,
             "occupation":      d.occupation,
+            "sex":             d.sex or "",
             "agent_name":      agent_name,
             "tenant_id":       str(d.tenant_id),
             "policy_count":        cnt,
@@ -335,6 +337,7 @@ def get_tenant_drivers(
             "city":            d.city,
             "postcode":        d.postcode,
             "occupation":      d.occupation,
+            "sex":             d.sex or "",
             "policy_count":        cnt,
             "active_policy_count": active_cnt,
             "last_policy_at":      last_at.strftime("%Y-%m-%d") if last_at else None,
@@ -367,6 +370,7 @@ def create_tenant_driver(
         city=data.city,
         postcode=data.postcode,
         occupation=data.occupation,
+        sex=data.sex,
     )
     db.add(driver)
     db.commit()
@@ -384,6 +388,7 @@ def create_tenant_driver(
         "city":            driver.city,
         "postcode":        driver.postcode,
         "occupation":      driver.occupation,
+        "sex":             driver.sex or "",
     }
 
 
@@ -461,6 +466,7 @@ class DriverUpdate(BaseModel):
     city: Optional[str] = None
     postcode: Optional[str] = None
     occupation: Optional[str] = None
+    sex: Optional[str] = None
 
 
 class VehicleUpdate(BaseModel):
@@ -494,6 +500,7 @@ def update_driver(
     if data.city is not None:            driver.city            = data.city
     if data.postcode is not None:        driver.postcode        = data.postcode
     if data.occupation is not None:      driver.occupation      = data.occupation
+    if data.sex is not None:             driver.sex             = data.sex
 
     db.commit()
     db.refresh(driver)
@@ -510,6 +517,7 @@ def update_driver(
         "city":            driver.city,
         "postcode":        driver.postcode,
         "occupation":      driver.occupation,
+        "sex":             driver.sex or "",
     }
 
 
@@ -742,6 +750,8 @@ def get_policy_detail(
             "city":            driver.city,
             "postcode":        driver.postcode,
             "occupation":      driver.occupation,
+            "sex":             driver.sex or "",
+        "sex":             driver.sex or "",
         } if driver else None,
         "vehicle": {
             "id":           str(vehicle.id),

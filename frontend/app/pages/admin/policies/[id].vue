@@ -94,6 +94,7 @@
           <div class="g-section-title">Policy Holder</div>
           <div class="g-info-row"><span class="g-info-label">Name</span><span class="g-info-value">{{ data.driver.first_name }} {{ data.driver.last_name }}</span></div>
           <div class="g-info-row"><span class="g-info-label">Date of birth</span><span class="g-info-value">{{ fmtDOB(data.driver.date_of_birth) }}</span></div>
+          <div class="g-info-row"><span class="g-info-label">Sex</span><span class="g-info-value">{{ data.driver.sex || "—" }}</span></div>
           <div class="g-info-row"><span class="g-info-label">Licence</span><span class="g-info-value mono">{{ data.driver.driving_licence }}</span></div>
           <div class="g-info-row"><span class="g-info-label">Email</span><span class="g-info-value"><a :href="`mailto:${data.driver.email}`" class="link">{{ data.driver.email }}</a></span></div>
           <div class="g-info-row"><span class="g-info-label">Mobile</span><span class="g-info-value">{{ data.driver.mobile }}</span></div>

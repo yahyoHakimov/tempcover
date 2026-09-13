@@ -44,6 +44,7 @@
           <div class="field"><label>First Name *</label><input v-model="driver.first_name" type="text" class="input" /></div>
           <div class="field"><label>Last Name *</label><input v-model="driver.last_name" type="text" class="input" /></div>
           <div class="field"><label>Date of Birth *</label><input v-model="driver.date_of_birth" type="date" class="input" /></div>
+          <div class="field"><label>Sex *</label><select v-model="driver.sex" class="input"><option value="">Select…</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
           <div class="field"><label>Driving Licence *</label><input v-model="driver.driving_licence" type="text" class="input" /></div>
           <div class="field"><label>Mobile *</label><input v-model="driver.mobile" type="tel" class="input" /></div>
           <div class="field"><label>Email *</label><input v-model="driver.email" type="email" class="input" /></div>
@@ -109,7 +110,7 @@ const breadcrumbs = ref([
 ])
 
 const policy = ref({ start_date: '', start_time: '', end_date: '', end_time: '', price: '', cover_type: 'fully_comprehensive', status: 'active' })
-const driver = ref({ first_name: '', last_name: '', date_of_birth: '', driving_licence: '', mobile: '', email: '', address_line_1: '', address_line_2: '', city: '', postcode: '', occupation: '' })
+const driver = ref({ first_name: '', last_name: '', date_of_birth: '', driving_licence: '', mobile: '', email: '', address_line_1: '', address_line_2: '', city: '', postcode: '', occupation: '', sex: '' })
 const vehicle = ref({ registration: '', make: '', model: '', year: '', color: '', value_range: '' })
 
 function showToast(msg, type = 'success') {
@@ -165,6 +166,7 @@ onMounted(async () => {
         city:            data.driver.city,
         postcode:        data.driver.postcode,
         occupation:      data.driver.occupation,
+        sex:             data.driver.sex || '',
       }
     }
 

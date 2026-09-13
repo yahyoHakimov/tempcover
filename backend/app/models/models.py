@@ -169,6 +169,7 @@ class Driver(Base):
     city           = Column(String(100), nullable=False)
     postcode       = Column(String(20), nullable=False)
     occupation     = Column(String(150), nullable=False)
+    sex            = Column(String(10), nullable=True)   # "Male"/"Female" — Statement of Fact'da chiqadi
 
     is_saved       = Column(Boolean, default=True)
 

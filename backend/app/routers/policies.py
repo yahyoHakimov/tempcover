@@ -220,6 +220,7 @@ def get_policy(
             "city":            driver.city,
             "postcode":        driver.postcode,
             "occupation":      driver.occupation,
+            "sex":             driver.sex or "",
         } if driver else None,
         "vehicle": {
             "id":           str(vehicle.id),
