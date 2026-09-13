@@ -35,7 +35,7 @@
 
       <div class="section">
         <h2>5. Cancellation</h2>
-        <p>Due to the short-term nature of our policies, cancellations and refunds are subject to our standard terms. Please contact us at <a href="mailto:support@tempcover-verify.com">support@tempcover-verify.com</a> for cancellation requests.</p>
+        <p>Due to the short-term nature of our policies, cancellations and refunds are subject to our standard terms. Please contact us at <a href="mailto:support@tempcovermyaccount.com">support@tempcovermyaccount.com</a> for cancellation requests.</p>
       </div>
 
       <div class="section">
@@ -60,7 +60,7 @@
 
       <div class="section">
         <h2>10. Contact</h2>
-        <p>For any questions regarding these terms, please contact us at <a href="mailto:support@tempcover-verify.com">support@tempcover-verify.com</a>.</p>
+        <p>For any questions regarding these terms, please contact us at <a href="mailto:support@tempcovermyaccount.com">support@tempcovermyaccount.com</a>.</p>
       </div>
     </div>
 

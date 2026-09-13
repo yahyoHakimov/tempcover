@@ -1,7 +1,7 @@
 # TempCover — production stack.
 # The public HTTPS gateway (nginx) is shared with the other projects on the server;
 # it reaches these containers by name over the external "proxy" network.
-# See nginx/tempcover-verify.com.conf for the server block to add to that gateway.
+# See nginx/tempcovermyaccount.com.conf for the server block to add to that gateway.
 
 services:
   db:

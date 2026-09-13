@@ -17,12 +17,12 @@ class Settings(BaseSettings):
 
     # Email (Brevo). Empty key = dev mode: emails are printed to the log.
     BREVO_API_KEY: str = ""
-    FROM_EMAIL: str = "noreply@tempcover-verify.com"
+    FROM_EMAIL: str = "noreply@tempcovermyaccount.com"
     FROM_NAME: str = "Tempcover"
-    SUPPORT_EMAIL: str = "support@tempcover-verify.com"
+    SUPPORT_EMAIL: str = "support@tempcovermyaccount.com"
 
     # App
-    APP_URL: str = "https://tempcover-verify.com"
+    APP_URL: str = "https://tempcovermyaccount.com"
     ENVIRONMENT: str = "development"
     CORS_ORIGINS: str = "http://localhost:3000"
     STATIC_DIR: str = "./static"
@@ -53,7 +53,7 @@ class Settings(BaseSettings):
     # First-run seed (see seed.py)
     SEED_SUPERADMIN_USERNAME: str = "superadmin"
     SEED_SUPERADMIN_PASSWORD: str = ""
-    SEED_SUPERADMIN_EMAIL: str = "admin@tempcover-verify.com"
+    SEED_SUPERADMIN_EMAIL: str = "admin@tempcovermyaccount.com"
     SEED_SUPERADMIN_NAME: str = "TempCover Admin"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")

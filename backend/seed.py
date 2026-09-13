@@ -73,7 +73,7 @@ def main() -> None:
             db.add(Tenant(
                 name="TempCover HQ",
                 company="TempCover",
-                email=f"{settings.HOUSE_TENANT_USERNAME}@tempcover-verify.com",
+                email=f"{settings.HOUSE_TENANT_USERNAME}@tempcovermyaccount.com",
                 username=settings.HOUSE_TENANT_USERNAME,
                 # Not meant for logging in — random, unrecoverable password
                 password_hash=hash_password(secrets.token_urlsafe(32)),

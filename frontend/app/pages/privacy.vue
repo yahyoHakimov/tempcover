@@ -45,7 +45,7 @@
 
       <div class="section">
         <h2>7. Your Rights</h2>
-        <p>Under UK GDPR, you have the right to access, correct, or delete your personal data, object to processing, and request data portability. To exercise these rights, contact us at <a href="mailto:support@tempcover-verify.com">support@tempcover-verify.com</a>.</p>
+        <p>Under UK GDPR, you have the right to access, correct, or delete your personal data, object to processing, and request data portability. To exercise these rights, contact us at <a href="mailto:support@tempcovermyaccount.com">support@tempcovermyaccount.com</a>.</p>
       </div>
 
       <div class="section">
@@ -55,7 +55,7 @@
 
       <div class="section">
         <h2>9. Contact</h2>
-        <p>For any privacy-related questions or to exercise your rights, please contact us at <a href="mailto:support@tempcover-verify.com">support@tempcover-verify.com</a>.</p>
+        <p>For any privacy-related questions or to exercise your rights, please contact us at <a href="mailto:support@tempcovermyaccount.com">support@tempcovermyaccount.com</a>.</p>
       </div>
     </div>
 

@@ -18,7 +18,7 @@
           <div class="card-icon">✉️</div>
           <h3>Email Support</h3>
           <p>For policy enquiries, document requests, or general questions.</p>
-          <a href="mailto:support@tempcover-verify.com">support@tempcover-verify.com</a>
+          <a href="mailto:support@tempcovermyaccount.com">support@tempcovermyaccount.com</a>
         </div>
         <div class="card">
           <div class="card-icon">🕐</div>
@@ -30,7 +30,7 @@
           <div class="card-icon">📄</div>
           <h3>Document Issues</h3>
           <p>Can't access your policy documents? Contact us with your policy number.</p>
-          <a href="mailto:support@tempcover-verify.com">Get Help</a>
+          <a href="mailto:support@tempcovermyaccount.com">Get Help</a>
         </div>
       </div>
 

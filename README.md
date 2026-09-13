@@ -125,10 +125,10 @@ nano backend/.env          # created from .env.example by the first deploy: set 
 docker compose up -d       # restart with the real values
 docker compose exec backend python seed.py
 
-# gateway: add nginx/tempcover-verify.com.conf as a server block to the shared nginx
+# gateway: add nginx/tempcovermyaccount.com.conf as a server block to the shared nginx
 #   (the swiftshield repo — commit it there, its deploys hard-reset the working tree),
 #   issue the certificate first:
-certbot certonly --webroot -w /var/www/letsencrypt -d tempcover-verify.com -d www.tempcover-verify.com
+certbot certonly --webroot -w /var/www/letsencrypt -d tempcovermyaccount.com -d www.tempcovermyaccount.com
 ```
 
 ## Branding
