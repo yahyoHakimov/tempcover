@@ -41,6 +41,7 @@ class Settings(BaseSettings):
     FCA_FRN: str = "746985"
     UNDERWRITER_NAME: str = "First Underwriting"
     UNDERWRITER_FRN: str = ""
+    CLAIMS_HOTLINE: str = "0333 241 3392"      # sertifikat sarlavhasidagi raqam
     POLICY_NUMBER_PREFIX: str = "TCV-MOT-"
 
     # Policy lifecycle jobs (0 = disabled)

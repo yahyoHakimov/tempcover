@@ -6,7 +6,6 @@ import os
 from datetime import datetime
 
 from app.config import settings
-from app.services.branding import insurer_info_text
 from .models import PolicyData
 
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
@@ -21,7 +20,7 @@ def _fmt(dt) -> str:
             dt = datetime.fromisoformat(dt)
         except Exception:
             return dt
-    return dt.strftime("%H:%M %d-%m-%Y")
+    return dt.strftime("%H:%M %d %B %Y")   # asl: "21:18 11 September 2026"
 
 
 def _fmt_date(dt) -> str:
@@ -49,20 +48,16 @@ def _render(policy: PolicyData) -> str:
         voluntary  = 0.0
         total      = 500.0
 
-    address_parts = []
-    if policy.address_line_1: address_parts.append(policy.address_line_1)
-    if policy.city:           address_parts.append(policy.city)
-    if policy.postcode:       address_parts.append(policy.postcode)
-    address = ", ".join(address_parts) if address_parts else "—"
+    # Asl: manzil qatorma-qator, oxirgisi "Shahar, Indeks".
+    lines = [policy.address_line_1, policy.address_line_2,
+             ", ".join(x for x in (policy.city, policy.postcode) if x)]
+    address = "<br>".join(x for x in lines if x) or "—"
 
     replacements = {
-        "{{ logo_path }}":          f"file://{SIG_DIR}/tempcover-logo.png",
+        "{{ logo_fu }}":            f"file://{SIG_DIR}/first-underwriting.png",
         "{{ policy_number }}":      policy.policy_number,
         "{{ date_issued }}":        _fmt_date(policy.issued_at),
         "{{ agent_name }}":         policy.agent_name or settings.TRADING_NAME,
-        "{{ trading_name }}":       settings.TRADING_NAME,
-        "{{ insurer_info }}":       insurer_info_text(),
-        "{{ version }}":            str(policy.version or 1),
         "{{ insured_name }}":       policy.insured_display,
         "{{ insured_address }}":    address,
         "{{ effective_datetime }}": _fmt(policy.start_datetime),

@@ -6,14 +6,13 @@ import os
 from datetime import datetime
 
 from app.config import settings
-from app.services.branding import legal_footer_text
 from .models import PolicyData
 
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
 SIG_DIR      = os.path.join(os.path.dirname(__file__), "signatures")
 
 
-def _fmt(dt, fmt="%H:%M hrs %d/%m/%Y") -> str:
+def _fmt(dt, fmt="%H:%M %d-%m-%Y") -> str:   # asl: "21:18 11-09-2026"
     if dt is None: return "—"
     if isinstance(dt, str):
         try: dt = datetime.fromisoformat(dt)
@@ -33,22 +32,18 @@ def _render(policy: PolicyData) -> str:
     with open(template_path, "r", encoding="utf-8") as f:
         html = f.read()
 
-    logo_path = f"file://{SIG_DIR}/tempcover-logo.png"
-    sign_path = f"file://{SIG_DIR}/sign.png"
-
+    # Rasmlar asl First Underwriting sertifikatidan kesib olingan.
     replacements = {
         "{{ policy_number }}":        policy.policy_number,
-        "{{ policy_suffix }}":        "",
-        "{{ date_of_issue }}":        _fmt_date(policy.issued_at),
         "{{ vehicle_registration }}": policy.vehicle_registration,
-        "{{ vehicle_description }}":  f"{policy.vehicle_make} {policy.vehicle_model}",
-        "{{ insured_name }}":         policy.insured_display,
+        "{{ insured_name }}":         policy.insured_name,        # aslida unvonsiz: "Harry Potter"
         "{{ effective_datetime }}":   _fmt(policy.start_datetime),
         "{{ expiry_datetime }}":      _fmt(policy.end_datetime),
-        "{{ logo_path }}":            logo_path,
-        "{{ sign_path }}":            sign_path,
-        "{{ company_legal_name }}":   settings.COMPANY_LEGAL_NAME,
-        "{{ legal_footer }}":         legal_footer_text(),
+        "{{ claims_hotline }}":       settings.CLAIMS_HOTLINE,
+        "{{ logo_fu }}":              f"file://{SIG_DIR}/first-underwriting.png",
+        "{{ logo_tc_blue }}":         f"file://{SIG_DIR}/tempcover-logo-blue.png",
+        "{{ sig_left }}":             f"file://{SIG_DIR}/sig_adam_cobourn.png",
+        "{{ sig_right }}":            f"file://{SIG_DIR}/sig_tom_donachie.png",
     }
 
     for key, value in replacements.items():

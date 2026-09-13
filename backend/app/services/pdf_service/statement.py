@@ -23,7 +23,6 @@ def _render(policy: PolicyData) -> str:
     with open(template_path, "r", encoding="utf-8") as f:
         html = f.read()
 
-    logo_path = f"file://{SIG_DIR}/tempcover-logo.png"
 
     name_parts = policy.insured_name.strip().split()
     surname    = name_parts[-1] if name_parts else ""
@@ -33,7 +32,7 @@ def _render(policy: PolicyData) -> str:
     address = ", ".join(p for p in address_parts if p)
 
     replacements = {
-        "{{ logo_path }}":           logo_path,
+        "{{ logo_fu }}":             f"file://{SIG_DIR}/first-underwriting.png",
         "{{ surname }}":             surname,
         "{{ forenames }}":           forenames,
         "{{ address }}":             address,

@@ -4,166 +4,49 @@
 <meta charset="UTF-8">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  @page {
-    size: A4;
-    margin: 15mm 18mm 18mm 18mm;
-  }
-
-  body {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 9.5pt;
-    color: #000;
-    background: white;
-  }
+  @page { size: A4; margin: 10mm 11mm 14mm 11mm; }
+  /* 3-sahifa: IMPORTANT tasmasi sahifaning eng pastida */
+  @page :nth(3) { margin-bottom: 9.5mm; @bottom-center { content: element(imp-bar); width: 100%; vertical-align: bottom; } }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 10pt; line-height: 1.46; color: #000; }
+  b, strong { font-weight: 700; }
 
   .page-break { page-break-before: always; }
 
-  /* ── Page header ── */
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    border-bottom: 1.5px solid #000;
-    padding-bottom: 3mm;
-    margin-bottom: 6mm;
-  }
+  .page-header { display: table; width: 100%; margin-bottom: 2.5mm; }
+  .page-header-title, .page-header-logo { display: table-cell; vertical-align: top; }
+  .page-header-title { font-size: 11pt; font-weight: 700; padding-top: 2.5mm; }
+  .page-header-logo { width: 32mm; text-align: right; }
+  .page-header-logo img { width: 31mm; height: auto; display: block; margin-left: auto; }
 
-  .page-header-title {
-    font-size: 12pt;
-    font-weight: 700;
-  }
-
-  /* ── Page 1 ── */
-  .sof-box {
-    border: 1px solid #ccc;
-    padding: 5mm 6mm;
-  }
-
-  .section-heading {
-    font-weight: 700;
-    font-style: italic;
-    font-size: 9.5pt;
-    margin-top: 5mm;
-    margin-bottom: 2mm;
-  }
-
+  /* 1-sahifa */
+  .sof-box { border: 1px solid #000; padding: 8.5mm 4mm 6mm; }
+  .section-heading { font-weight: 700; font-style: italic; font-size: 10pt; margin-top: 3.5mm; margin-bottom: 1.2mm; }
   .section-heading:first-child { margin-top: 0; }
+  .field-row { display: table; width: 100%; margin-bottom: 1.4mm; }
+  .field-label, .field-value, .field-value-para { display: table-cell; vertical-align: top; }
+  .field-label { font-weight: 700; width: 60mm; }
 
-  .field-row {
-    display: flex;
-    margin-bottom: 2mm;
-    align-items: baseline;
-  }
+  .important-banner { background: #000; color: #fff; font-weight: 700; font-size: 8.5pt; line-height: 1.3; padding: 2.2mm 3mm; margin-top: 5mm; white-space: nowrap; overflow: hidden; }
+  .important-banner.running { position: running(imp-bar); margin: 0; }
+  .page-footer { margin-top: 12mm; text-align: center; font-size: 8.5pt; }
 
-  .field-label {
-    font-weight: 700;
-    font-size: 9.5pt;
-    min-width: 70mm;
-    flex-shrink: 0;
-  }
+  /* 2-sahifa */
+  .declaration-intro { font-weight: 700; margin: 0 0 1mm 5mm; line-height: 1.44; }
+  .alpha-list { list-style: none; margin: 0 0 5mm 5mm; line-height: 1.44; }
+  .alpha-list li { display: table; width: 100%; text-align: justify; }
+  .alpha-list li > span { display: table-cell; vertical-align: top; }
+  .alpha-marker { font-size: 8pt; width: 6mm; }
+  .bold-para { font-weight: 700; margin: 0 0 4mm 5mm; text-align: justify; line-height: 1.44; }
 
-  .field-value { font-size: 9.5pt; }
-
-  .field-value-para {
-    font-size: 9.5pt;
-    line-height: 1.5;
-  }
-
-  .important-banner {
-    background: #000;
-    color: #fff;
-    font-weight: 700;
-    font-size: 8.5pt;
-    padding: 2.5mm 4mm;
-    margin-top: 5mm;
-  }
-
-  .page-footer {
-    margin-top: 8mm;
-    text-align: center;
-    font-size: 8pt;
-    color: #333;
-  }
-
-  /* ── Page 2 ── */
-  .declaration-intro {
-    font-weight: 700;
-    font-size: 9.5pt;
-    margin-bottom: 3mm;
-  }
-
-  .alpha-list {
-    list-style: none;
-    margin: 0 0 5mm 0;
-    padding: 0;
-  }
-
-  .alpha-list li {
-    display: flex;
-    margin-bottom: 2mm;
-    font-size: 9.5pt;
-    line-height: 1.5;
-    text-align: justify;
-  }
-
-  .alpha-marker {
-    font-size: 8pt;
-    font-weight: 700;
-    min-width: 8mm;
-    padding-top: 0.5mm;
-    flex-shrink: 0;
-  }
-
-  .bold-para {
-    font-weight: 700;
-    font-size: 9.5pt;
-    line-height: 1.5;
-    margin-bottom: 4mm;
-    text-align: justify;
-  }
-
-  /* ── Page 3 ── */
-  .warning-block {
-    font-size: 9.5pt;
-    line-height: 1.5;
-    margin-bottom: 4mm;
-    text-align: justify;
-  }
-
-  .roman-list {
-    list-style: none;
-    margin: 2mm 0 4mm 8mm;
-    padding: 0;
-  }
-
-  .roman-list li {
-    display: flex;
-    font-size: 9.5pt;
-    line-height: 1.5;
-    margin-bottom: 1.5mm;
-  }
-
-  .roman-marker {
-    min-width: 8mm;
-    flex-shrink: 0;
-    font-size: 8pt;
-    padding-top: 0.5mm;
-  }
-
-  .section-subheading {
-    font-weight: 700;
-    font-size: 9.5pt;
-    margin-top: 5mm;
-    margin-bottom: 2mm;
-  }
-
-  .normal-para {
-    font-size: 9.5pt;
-    line-height: 1.5;
-    margin-bottom: 4mm;
-    text-align: justify;
-  }
+  /* 3-sahifa */
+  .warning-block { text-align: justify; margin: 0; line-height: 1.36; }
+  .roman-list { list-style: none; margin: 1mm 0 2mm 4mm; line-height: 1.36; }
+  .roman-list li { display: table; width: 100%; }
+  .roman-list li > span { display: table-cell; vertical-align: top; }
+  .roman-marker { width: 6mm; font-size: 8pt; text-align: right; padding-right: 1.5mm; }
+  .section-subheading { font-weight: 700; margin-top: 3.5mm; line-height: 1.36; }
+  .normal-para { text-align: justify; margin: 0; line-height: 1.36; }
+  .normal-para.gap-after { margin-bottom: 3mm; }
 </style>
 </head>
 <body>
@@ -174,7 +57,7 @@
 
 <div class="page-header">
   <div class="page-header-title">STATEMENT OF FACT - Short Term Insurance</div>
-  <img src="{{ logo_path }}" alt="TempCover" style="height: 28px;" />
+  <div class="page-header-logo"><img src="{{ logo_fu }}" alt="First Underwriting" /></div>
 </div>
 
 <div class="sof-box">
@@ -290,7 +173,7 @@
 
 <div class="page-header">
   <div class="page-header-title">First Underwriting / PROPOSER DECLARATION</div>
-  <img src="{{ logo_path }}" alt="TempCover" style="height: 28px;" />
+  <div class="page-header-logo"><img src="{{ logo_fu }}" alt="First Underwriting" /></div>
 </div>
 
 <div class="declaration-intro">I declare that I, or any named driver:</div>
@@ -334,7 +217,7 @@
 
 <div class="page-header">
   <div class="page-header-title">IMPORTANT NOTES</div>
-  <img src="{{ logo_path }}" alt="TempCover" style="height: 28px;" />
+  <div class="page-header-logo"><img src="{{ logo_fu }}" alt="First Underwriting" /></div>
 </div>
 
 <div class="warning-block">
@@ -360,13 +243,13 @@
   <li><span class="roman-marker">iv.</span><span>The provision of government Mulsannes and or other Miscellaneous and aimed at reducing the level and incidence of uninsured driving.</span></li>
 </ul>
 
-<div class="normal-para">If you are involved in a road traffic accident (either in the UK, EEA or certain other territories), insurers and or the MIB may search the MID to obtain relevant information. Persons (including his or her appointed representatives) pursuing a claim in respect of a road traffic accident (including citizens of other countries) may also obtain information which is held on the MID. It is vital that the MID holds your correct registration number. If it is incorrectly shown on MID you are at risk of having your vehicle seized by the Police. You can check that your correct registration number details are shown on the MID at <strong>www.askmid.com</strong>. You should show this notice to anyone insured to drive the vehicle covered under the Policy.</div>
+<div class="normal-para gap-after">If you are involved in a road traffic accident (either in the UK, EEA or certain other territories), insurers and or the MIB may search the MID to obtain relevant information. Persons (including his or her appointed representatives) pursuing a claim in respect of a road traffic accident (including citizens of other countries) may also obtain information which is held on the MID. It is vital that the MID holds your correct registration number. If it is incorrectly shown on MID you are at risk of having your vehicle seized by the Police. You can check that your correct registration number details are shown on the MID at <strong>www.askmid.com</strong>. You should show this notice to anyone insured to drive the vehicle covered under the Policy.</div>
 
 <div class="section-subheading">DECLARATION</div>
 
 <div class="normal-para">I declare that the information provided during the quotation process, I declare that to the best of my knowledge and belief all statements and answers in the proposal are true and correct. I understand that it is my duty to take reasonable care not to make a misrepresentation of information which will influence and/or assessment of the proposal and that due to the short term nature of the policy, changes and additions cannot be made once the policy has been taken out.</div>
 
-<div class="normal-para">I agree that this Proposal and Declaration shall form the basis of the contract between me and the Insurer and that if any answer has been written by any other person, such person shall be deemed to be my agent for that purpose. A copy of this completed Statement of Fact will be provided as an attachment in the Confirmation Email sent following the purchase of the policy, or by post if requested during the quotation process. You should keep a record (including copies of letters) of all information supplied to us for the purpose of entering into this contract. A specimen policy is available on request.</div>
+<div class="normal-para gap-after">I agree that this Proposal and Declaration shall form the basis of the contract between me and the Insurer and that if any answer has been written by any other person, such person shall be deemed to be my agent for that purpose. A copy of this completed Statement of Fact will be provided as an attachment in the Confirmation Email sent following the purchase of the policy, or by post if requested during the quotation process. You should keep a record (including copies of letters) of all information supplied to us for the purpose of entering into this contract. A specimen policy is available on request.</div>
 
 <div class="section-subheading">IN THE EVENT OF A COMPLAINT</div>
 
@@ -374,7 +257,7 @@
 
 <div class="normal-para">We will make every effort to resolve your complaint immediately. If we cannot resolve your complaint by the end of the next working day, we will acknowledge your complaint within five (5) days of receipt and will do our best to resolve the problem within four (4) weeks by sending you a final response letter. If we are unable to resolve your complaint in this timeframe we will send you a further update within eight (8) weeks of the original complaint.</div>
 
-<div class="important-banner">
+<div class="important-banner running">
   IMPORTANT - You also must read the First Underwriting Insurance Proposer Declaration &amp; Important Notes on Pages 2 &amp; 3
 </div>
 

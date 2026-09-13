@@ -3,267 +3,126 @@
 <head>
 <meta charset="UTF-8">
 <style>
+  /* Asl First Underwriting sertifikati: 20mm chekinish, Arial 8pt, qator 11.2pt */
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  @page { size: A4; margin: 19mm 20mm 20mm 20mm; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 8pt; line-height: 1.4; color: #000; }
+  p { margin: 0; }
+  b, strong { font-weight: 700; }
+  i, em { font-style: italic; }
 
-  @page {
-    size: A4;
-    margin: 10mm 12mm 10mm 12mm;
-  }
+  table { border-collapse: collapse; width: 100%; }
+  td { vertical-align: top; padding: 0; }
 
-  body {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 8pt;
-    color: #000;
-    background: white;
-    padding: 5mm 8mm 5mm 8mm;
-  }
+  .head td { vertical-align: middle; }
+  .head .logo img { width: 31mm; height: auto; display: block; }
+  .head .hotline { text-align: right; font-size: 10pt; font-weight: 700; }
+  .rule { border-top: 2.5px solid #000; margin-top: 3mm; }
 
-  /* ── Top bar: date of issue right-aligned ── */
-  .top-bar {
-    text-align: right;
-    font-size: 8pt;
-    margin-bottom: 2mm;
-  }
+  .title { text-align: center; font-size: 13pt; font-weight: 700; margin-top: 8mm; }
+  .cert-no { text-align: center; font-size: 8.5pt; font-weight: 700; margin-top: 5mm; }
 
-  /* ── Logo row ── */
-  .logo-row {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 2mm;
-  }
+  .row { margin-top: 4.5mm; }
+  .row td.l { width: 52mm; font-weight: 700; }
+  .row.inline b { font-weight: 700; }
+  .lbl { font-weight: 700; }
+  .provided { font-style: italic; font-size: 7pt; margin-top: 1mm; }
+  .name { margin-top: 5mm; }
+  .limits { margin-top: 1.5mm; text-align: justify; }
+  .impound { margin-top: 4mm; font-weight: 700; }
+  .certify { margin-top: 5mm; font-style: italic; text-align: justify; }
+  .issued { margin-top: 5mm; font-style: italic; }
 
-  /* ── Main bordered table ── */
-  .cert-table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 1.5px solid #000;
-    margin-bottom: 2mm;
-  }
+  .sigs { margin-top: 7mm; }
+  .sigs td { width: 50%; }
+  .sigs td.r { text-align: right; }
+  .sigs img { width: 14mm; height: auto; display: block; }
+  .sigs td.r img { width: 15mm; }
+  .sigs td.r img { margin-left: auto; }
+  .sigs .who { margin-top: 3mm; }
 
-  .cert-table td {
-    border: 1.5px solid #000;
-    padding: 1.5mm 2.5mm;
-    vertical-align: top;
-    font-size: 8pt;
-    line-height: 1.3;
-  }
+  .notes { margin-top: 8mm; font-size: 7pt; line-height: 1.5; }
+  .rule2 { border-top: 2.5px solid #000; margin-top: 2.5mm; }
+  .foot { margin-top: 5mm; }
+  .foot td { vertical-align: middle; width: 33.3%; }
+  .foot .logo { text-align: center; }
+  .foot .logo img { width: 38mm; height: auto; display: inline-block; }
+  .foot .ver { text-align: right; font-size: 6.5pt; }
 
-  .cert-table td.label {
-    font-weight: 700;
-    width: 52mm;
-    white-space: nowrap;
-  }
-
-  .cert-table .title-cell {
-    text-align: center;
-    font-size: 14pt;
-    font-weight: 700;
-    padding: 2.5mm 3mm;
-  }
-
-  .cert-table .cert-num-row td {
-    border-bottom: 1.5px solid #000;
-  }
-
-  .cert-num-left {
-    font-weight: 700;
-    font-size: 8pt;
-  }
-
-  /* ── Section 6 sub-items ── */
-  .use-list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .use-list li {
-    margin-bottom: 1mm;
-    font-size: 8pt;
-    line-height: 1.3;
-  }
-
-  /* ── Signature block ── */
-  .signatures {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 4mm;
-  }
-
-  .sig-block { width: 45%; text-align: right; }
-
-  .sig-image {
-    height: 12mm;
-    margin-bottom: 2mm;
-  }
-
-  .sig-image img { height: 14mm; }
-
-  .sig-name { font-weight: 700; font-size: 8pt; }
-  .sig-title { font-size: 8pt; }
-
-  /* ── Page 2 ── */
-  .page-break {
-    page-break-before: always;
-  }
-
-  .notes-page {
-    margin-top: 0;
-    padding-top: 0;
-  }
-
-  .notes-page-title {
-    font-weight: 700;
-    font-size: 8.5pt;
-    text-decoration: underline;
-    margin-bottom: 2mm;
-  }
-
-  .notes-page ul {
-    margin: 0 0 0 5mm;
-    padding: 0;
-    list-style: disc;
-  }
-
-  .notes-page ul li {
-    font-size: 8pt;
-    line-height: 1.3;
-    margin-bottom: 3.5mm;
-    text-align: justify;
-  }
-
-  .footer-page2 {
-    margin-top: 6mm;
-    font-size: 7pt;
-    color: #000;
-    line-height: 1.3;
-    text-align: left;
-  }
+  /* 2-sahifa: ko'p tilli ogohlantirish qutisi */
+  .page2 { page-break-before: always; }
+  .ml-box { border: 1px solid #444; padding: 4mm 4mm 3mm; margin-top: 6mm; }
+  .ml-box h2 { font-size: 9pt; font-weight: 700; margin-bottom: 3mm; }
+  .ml-box p { font-size: 7pt; line-height: 1.4; text-align: justify; margin-bottom: 2mm; }
+  .ml-box p:last-child { margin-bottom: 0; }
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════
-     PAGE 1 — CERTIFICATE
-══════════════════════════════════════ -->
+<table class="head"><tr>
+  <td class="logo"><img src="{{ logo_fu }}" alt="First Underwriting"></td>
+  <td class="hotline">Claims Hotline: {{ claims_hotline }}</td>
+</tr></table>
+<div class="rule"></div>
 
-<!-- Date of issue (top right) -->
-<!-- Logo (top right) -->
-<div class="logo-row">
-  <img src="{{ logo_path }}"
-       alt="TempCover"
-       style="height: 48px;" />
-</div>
-<div class="top-bar">Date of issue: {{ date_of_issue }}</div>
+<p class="title">CERTIFICATE OF MOTOR INSURANCE</p>
+<p class="cert-no">Certificate Number: {{ policy_number }}</p>
 
-<!-- Main certificate table -->
-<table class="cert-table">
+<table class="row"><tr><td class="l">(1) Vehicle Registration Number:</td><td>{{ vehicle_registration }}</td></tr></table>
+<table class="row"><tr><td class="l">(2) Insured:</td><td>{{ insured_name }}</td></tr></table>
+<table class="row"><tr>
+  <td style="width:50%"><b>(3) Effective Time/Date:</b>{{ effective_datetime }}</td>
+  <td style="width:50%"><b>(4) Expiry Time/Date:</b>{{ expiry_datetime }}</td>
+</tr></table>
 
-  <!-- Title row -->
-  <tr>
-    <td class="title-cell" colspan="2">Certificate of Motor Insurance</td>
-  </tr>
-
-  <!-- Certificate number row -->
-  <tr class="cert-num-row">
-    <td class="label cert-num-left">Certificate number:</td>
-    <td>{{ policy_number }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ policy_suffix }}</td>
-  </tr>
-
-  <!-- Row 1: Registration -->
-  <tr>
-    <td class="label">1. Registration mark of vehicle:</td>
-    <td>
-      a) {{ vehicle_registration }} – {{ vehicle_description }}<br><br>
-      b) Any motor car supplied to the policyholder under the courtesy car option (Section J) of this policy or any motor car supplied to the policyholder under an agreement between the insurers and a recommended repairer while the car described above is being repaired by that repairer as a direct result of damage covered by this policy.
-    </td>
-  </tr>
-
-  <!-- Row 2: Policyholder name -->
-  <tr>
-    <td class="label">2. Name of policyholder:</td>
-    <td>{{ insured_name }}</td>
-  </tr>
-
-  <!-- Row 3: Effective date -->
-  <tr>
-    <td class="label">3. Effective date of the<br>relevant law:</td>
-    <td>{{ effective_datetime }} <strong>commencement of insurance for the purposes of the relevant law:</strong></td>
-  </tr>
-
-  <!-- Row 4: Expiry date -->
-  <tr>
-    <td class="label">4. Date of expiry of insurance:</td>
-    <td>{{ expiry_datetime }}</td>
-  </tr>
-
-  <!-- Row 5: Persons entitled to drive -->
-  <tr>
-    <td class="label">5. Persons or classes of</td>
-    <td>
-      {{ insured_name }} <strong>persons entitled to drive:</strong><br><br>
-      Provided the person driving holds a licence to drive the car or has held and is not disqualified from holding or obtaining such a licence.<br>
-      The policyholder only may also drive a car not owned by them or hired to them under a hire purchase agreement, rental or short term hire agreement or annual leasing agreement and which is not used in connection with the motor trade provided:<br><br>
-      &bull;&nbsp;The owner of the car has valid insurance in force on that car which does not cover the policyholder on this policy to drive that car.<br>
-      &bull;&nbsp;The owner of the car has given the policyholder permission to drive it.<br>
-      &bull;&nbsp;The car is being driven in Great Britain, Northern Ireland, the Channel Islands or the Isle of Man.<br>
-      &bull;&nbsp;The car is used within the limitations of use shown below.
-    </td>
-  </tr>
-
-  <!-- Row 6: Limitations -->
-  <tr>
-    <td class="label">6. Limitations as to use:</td>
-    <td>
-      <ul class="use-list">
-        <li>a) Use for social domestic and pleasure purposes.</li>
-        <li>b) This policy does not cover use for commercial travelling.</li>
-        <li>c) This policy does not cover use on the Nurburgring Nordschleife, racing, competitions, speed testing, rallies, track days, 4x4 off road events or trials, any purpose in connection with the motor trade, hiring or carrying of passengers for profit.</li>
-        <li>d) This policy may not be used to secure the release of a motor vehicle other than the vehicle identified above by its registration mark, which has been seized by or on behalf of any government or public authority.</li>
-        <li>e) This policy does not cover use for any business purposes.</li>
-      </ul>
-    </td>
-  </tr>
-
-  <!-- Certify row -->
-  <tr>
-    <td colspan="2" style="padding: 2mm; font-size:9pt; line-height:1.5;">
-      We hereby certify that the policy to which this certificate relates satisfies the requirements of the relevant law applicable in
-      Great Britain, Northern Ireland, the Isle of Man, the Islands of Guernsey, Jersey and Alderney.
-    </td>
-  </tr>
-
-</table>
-
-<!-- Signature block (right-aligned, outside table) -->
-<div class="signatures">
-  <div class="sig-block">
-    <div class="sig-image">
-      <img src="{{ sign_path }}" alt="Signature" />
-    </div>
-    <div class="sig-name">Authorised Signatory</div>
-    <div class="sig-title">For and on behalf of {{ company_legal_name }}</div>
-  </div>
+<div class="row">
+  <p class="lbl">(5) Persons or Classes of Persons Entitled to Drive</p>
+  <p class="provided">(Provided that the person holds a licence to drive such a vehicle and is not disqualified from holding or obtaining such a licence)</p>
+  <p class="name">{{ insured_name }}</p>
 </div>
 
-
-<!-- ══════════════════════════════════════
-     PAGE 2 — IMPORTANT NOTES
-══════════════════════════════════════ -->
-<div class="page-break"></div>
-
-<div class="notes-page">
-  <div class="notes-page-title">Important Notes</div>
-  <ul>
-    <li>This certificate gives evidence of insurance cover to comply with the law. For full details of the cover, reference should also be made to the policy wording and schedule.</li>
-    <li>Unless stated otherwise in paragraph 5 above this policy does not cover the policyholder to drive any car other than those listed in paragraphs 1a and 1b. If paragraph 5 allows the policyholder to drive a car not belonging or hired to them cover will be limited to Third Party only. There is no cover for loss or damage to the car being driven.</li>
-    <li>This certificate of motor insurance takes the place of an International Motor Insurance Card(green card) and is evidence that the insurance extends to include the compulsory motor insurance requirements of any member country of the European Union, Andorra, Bosnia-Herzegovina, Iceland, Liechtenstein, Montenegro, Norway, Serbia and Switzerland.</li>
-    <li>Advice to third parties: Nothing in this certificate affects your right as a third party to make a claim.</li>
-  </ul>
+<div class="row">
+  <p class="lbl">(6) Limitations to use:</p>
+  <p class="limits">Use for social, domestic and pleasure purposes and use in person by the Policyholder in connection with their business or profession <b>EXCLUDING</b> Commercial Travelling, hiring, carriage of passengers or goods for hire and reward, any purpose in connection with the Motor Trade, racing, pace-making, speed testing or reliability testing or use on any race track, race circuit or toll road without a speed limit including the Nurburgring.</p>
 </div>
 
-<div class="footer-page2">
-  {{ legal_footer }}
+<p class="impound">This Certificate cannot be used as evidence of cover for the purpose of recovering impounded vehicles.</p>
+
+<p class="certify">I hereby certify that the policy to which this certificate relates satisfies the requirements of the related law applicable in Great Britain, Northern Ireland, the Isle of Man, the Island of Guernsey, the Island of Jersey and the Island of Alderney.</p>
+
+<p class="issued">Issued by First Underwriting Ltd for and on behalf of Accredited Insurance (Europe) Limited. Authorised Insurers.</p>
+
+<table class="sigs"><tr>
+  <td>
+    <img src="{{ sig_left }}" alt="">
+    <p class="who">Adam Cobourn<br>Director<br>Accredited Insurance (Europe) Limited</p>
+  </td>
+  <td class="r">
+    <img src="{{ sig_right }}" alt="">
+    <p class="who">Tom Donachie<br>Managing Director<br>First Underwriting (Limited)</p>
+  </td>
+</tr></table>
+
+<p class="notes">Note: For full details of the insurance cover reference should be made to the Insurance Document and Schedule.<br>Advice to Third Parties: Nothing contained in this Certificate affects your right as a Third Party to make a claim.</p>
+<div class="rule2"></div>
+
+<table class="foot"><tr>
+  <td></td>
+  <td class="logo"><img src="{{ logo_tc_blue }}" alt="tempcover"></td>
+  <td class="ver">Version FRCERT1118</td>
+</tr></table>
+
+<div class="page2"></div>
+<div class="ml-box">
+  <h2>IMPORTANT INFORMATION - MULTI-LANGUAGE COMPLIANCE</h2>
+  <p><b>English:</b> This certificate is evidence that a policy of insurance is in force. It does not however confer any right upon the certificate holder which is not provided by the policy itself. The policy contains full details of the cover provided.</p>
+  <p><b>Français:</b> Ce certificat atteste qu'une police d'assurance est en vigueur. Il ne confère cependant aucun droit au porteur du certificat qui ne soit prévu par la police elle-même. La police contient tous les détails de la couverture fournie.</p>
+  <p><b>Deutsch:</b> Diese Bescheinigung ist ein Nachweis dafür, dass eine Versicherungspolice in Kraft ist. Sie verleiht dem Zertifikatsinhaber jedoch keine Rechte, die nicht in der Police selbst vorgesehen sind. Die Police enthält alle Einzelheiten der gewährten Deckung.</p>
+  <p><b>Español:</b> Este certificado es evidencia de que una póliza de seguro está en vigor. Sin embargo, no confiere ningún derecho al portador del certificado que no esté previsto en la póliza misma. La póliza contiene todos los detalles de la cobertura proporcionada.</p>
+  <p><b>Italiano:</b> Questo certificato è la prova che una polizza assicurativa è in vigore. Tuttavia, non conferisce alcun diritto al portatore del certificato che non sia previsto dalla polizza stessa. La polizza contiene tutti i dettagli della copertura fornita.</p>
+  <p><b>Nederlands:</b> Dit certificaat is bewijs dat een verzekeringspolis van kracht is. Het verleent echter geen rechten aan de certificaathouder die niet in de polis zelf zijn voorzien. De polis bevat alle details van de verstrekte dekking.</p>
+  <p><b>Português:</b> Este certificado é evidência de que uma apólice de seguro está em vigor. No entanto, não confere nenhum direito ao portador do certificado que não esteja previsto na própria apólice. A apólice contém todos os detalhes da cobertura fornecida.</p>
+  <p><b>Polski:</b> Ten certyfikat jest dowodem na to, że polisa ubezpieczeniowa jest w mocy. Nie przyznaje jednak posiadaczowi certyfikatu żadnych praw, które nie są przewidziane w samej polisie. Polisa zawiera wszystkie szczegóły dotyczące zapewnionego ubezpieczenia.</p>
 </div>
 
 </body>

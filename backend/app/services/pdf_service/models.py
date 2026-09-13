@@ -35,6 +35,7 @@ class PolicyData:
     issued_at:          datetime | str | None = None
     value_range:        str = "N/A"
     address_line_1:     str = ""
+    address_line_2:     str = ""
     city:               str = ""
     postcode:           str = ""
     compulsory_excess:  str = "500.00"
@@ -50,7 +51,7 @@ class PolicyData:
     number_of_drivers:  str = "1"
     driver_sex:         str = "—"
     driver_dob:         str = ""
-    driver_licence_type: str = "Full UK Licence"
+    driver_licence_type: str = "Full UK licence"
     driver_occupation:  str = ""
 
     def __post_init__(self) -> None:
