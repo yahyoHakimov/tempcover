@@ -75,7 +75,7 @@ countdown). Agents sign in on the same page.
 
 Emails return `sent` / `skipped` / `failed`; only `sent` marks a policy as emailed. With `BREVO_API_KEY` empty everything is `skipped` and printed to `logs/backend.log`.
 
-Documents (WeasyPrint from `backend/app/services/pdf_service/templates/`): Certificate of Motor Insurance, Policy Schedule, Statement of Fact — generated per policy; Policy Wording, IPID, contract etc. are uploaded once by the super admin under **Settings** and listed automatically.
+Documents (WeasyPrint from `backend/app/services/pdf_service/templates/`): Certificate of Motor Insurance, Policy Schedule, Statement of Fact — generated per policy. The static set — Policy Wording, Insurance Product Information Document (IPID) and Your Contract with Tempcover — ships with the repo in `backend/app/static_docs/` and is installed into `static/docs` + registered by `python seed.py` (once; existing rows are kept). Further documents can be uploaded by the super admin under **Settings**.
 
 ## Configuration (`backend/.env`, see `.env.example`)
 
