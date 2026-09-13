@@ -110,6 +110,9 @@ class Tenant(Base):
 
     stripe_customer_id = Column(String(255), nullable=True)
 
+    # Date the "policies expiring soon" digest was last emailed to the agent
+    expiry_digest_sent_on = Column(Date, nullable=True)
+
     created_by  = Column(UUID(as_uuid=True), nullable=True)
     created_at  = Column(DateTime(timezone=True), server_default=func.now())
     updated_at  = Column(DateTime(timezone=True), onupdate=func.now())
@@ -233,6 +236,12 @@ class Policy(Base):
     voluntary_excess  = Column(Numeric(10, 2), default=0.00)
 
     status          = Column(Enum(PolicyStatus), default=PolicyStatus.PENDING)
+
+    # Lifecycle
+    version                 = Column(Integer, default=1, server_default="1", nullable=False)  # bumped on mid-term adjustments
+    cancelled_at            = Column(DateTime(timezone=True), nullable=True)
+    cancellation_reason     = Column(String(255), nullable=True)
+    expiry_reminder_sent_at = Column(DateTime(timezone=True), nullable=True)
 
     pdf_certificate_url    = Column(String(500), nullable=True)
     pdf_schedule_url       = Column(String(500), nullable=True)

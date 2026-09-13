@@ -4,7 +4,7 @@
     <div class="page-head">
       <div>
         <h1 class="g-title">Edit Policy</h1>
-        <p class="g-subtitle">Changes apply to the policy, the driver record and the vehicle record.</p>
+        <p class="g-subtitle">Saving issues a new version of the documents and emails the driver the updated set.</p>
       </div>
     </div>
 
@@ -116,6 +116,11 @@ function showToast(msg, type = 'success') {
 onMounted(async () => {
   try {
     const data = await api.get(`/api/policies/${route.params.id}`, auth.token)
+    if (!['active', 'pending'].includes(data.policy.status)) {
+      showToast(`This policy is ${data.policy.status} and cannot be edited`, 'error')
+      setTimeout(() => navigateTo(`/admin/policies/${route.params.id}`), 1500)
+      return
+    }
     const s = splitDateTime(data.policy.start_datetime)
     const e = splitDateTime(data.policy.end_datetime)
     policy.value = { start_date: s.date, start_time: s.time, end_date: e.date, end_time: e.time, price: data.policy.price, cover_type: data.policy.cover_type }
@@ -157,7 +162,7 @@ async function saveAll() {
       api.patch(`/api/drivers/${driverId.value}`, { ...driver.value }, auth.token),
       api.patch(`/api/vehicles/${vehicleId.value}`, { ...vehicle.value, year: vehicle.value.year ? parseInt(vehicle.value.year) : undefined }, auth.token),
     ])
-    showToast('Policy updated')
+    showToast('Policy updated — new documents emailed to the driver')
     setTimeout(() => navigateTo(`/admin/policies/${route.params.id}`), 800)
   } catch (e) {
     showToast(e.message || 'Failed to save changes', 'error')

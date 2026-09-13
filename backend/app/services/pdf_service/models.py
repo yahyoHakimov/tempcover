@@ -40,6 +40,8 @@ class PolicyData:
     compulsory_excess:  str = "500.00"
     voluntary_excess:   str = "0.00"
     reason_for_issue:   str = "New Business"
+    agent_name:         str = ""
+    version:            int = 1
 
     # ── Statement of Fact fields ─────────────────────────────────────────
     telephone:          str = ""

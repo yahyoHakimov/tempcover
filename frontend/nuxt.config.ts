@@ -12,6 +12,7 @@ export default defineNuxtConfig({
     '/admin/**':      { ssr: false, headers: { 'Cache-Control': 'no-store' } },
     '/admin/login':   { ssr: true,  headers: { 'Cache-Control': 'no-store' } },
     '/driver/portal': { ssr: false },
+    '/verifydetailspolicy/**': { ssr: false },
   },
 
   // Local development: the Nuxt dev server proxies /api and /static to the FastAPI backend,

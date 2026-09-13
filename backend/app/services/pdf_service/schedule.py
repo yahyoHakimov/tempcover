@@ -4,6 +4,9 @@ ScheduleGenerator — HTML template based New Business Schedule.
 
 import os
 from datetime import datetime
+
+from app.config import settings
+from app.services.branding import insurer_info_text
 from .models import PolicyData
 
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
@@ -56,7 +59,10 @@ def _render(policy: PolicyData) -> str:
         "{{ logo_path }}":          f"file://{SIG_DIR}/tempcover-logo.png",
         "{{ policy_number }}":      policy.policy_number,
         "{{ date_issued }}":        _fmt_date(policy.issued_at),
-        "{{ agent_name }}":         "TempCover",
+        "{{ agent_name }}":         policy.agent_name or settings.TRADING_NAME,
+        "{{ trading_name }}":       settings.TRADING_NAME,
+        "{{ insurer_info }}":       insurer_info_text(),
+        "{{ version }}":            str(policy.version or 1),
         "{{ insured_name }}":       policy.insured_display,
         "{{ insured_address }}":    address,
         "{{ effective_datetime }}": _fmt(policy.start_datetime),
@@ -64,7 +70,7 @@ def _render(policy: PolicyData) -> str:
         "{{ reason_for_issue }}":   policy.reason_for_issue or "New Business",
         "{{ premium }}":            policy.price,
         "{{ vehicle_registration }}": policy.vehicle_registration,
-        "{{ cover_type }}":         "FULLY COMPREHENSIVE",
+        "{{ cover_type }}":         (policy.policy_cover or "Fully Comprehensive").upper(),
         "{{ vehicle_value }}":      policy.value_range or "—",
         "{{ vehicle_make_model }}": policy.make_model,
         "{{ compulsory_excess }}":  f"{compulsory:.2f}",

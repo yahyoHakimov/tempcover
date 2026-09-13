@@ -58,3 +58,15 @@ export function splitDateTime(iso?: string | null): { date: string; time: string
   const s = d.toISOString()
   return { date: s.slice(0, 10), time: s.slice(11, 16) }
 }
+
+/** Human "starts in" text for a pending policy; '' once started */
+export function timeUntil(iso?: string | null): string {
+  if (!iso) return ''
+  const ms = new Date(iso).getTime() - Date.now()
+  if (ms <= 0) return ''
+  const h = Math.floor(ms / 3600000)
+  const d = Math.floor(h / 24)
+  if (d >= 1) return `starts in ${d}d ${h % 24}h`
+  const m = Math.floor((ms % 3600000) / 60000)
+  return h >= 1 ? `starts in ${h}h ${m}m` : `starts in ${m}m`
+}

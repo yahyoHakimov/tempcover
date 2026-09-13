@@ -275,96 +275,38 @@ class DriverLoginRequest(BaseModel):
     last_name: str
     date_of_birth: str  # YYYY-MM-DD
 
+
 @router.post("/portal/login")
 def driver_portal_login(
     data: DriverLoginRequest,
     db: Session = Depends(get_db),
 ):
-    from app.models.models import Policy, Vehicle, StaticDocument
-    from datetime import datetime
+    """Driver self-service: policy number + surname + date of birth → policy details and document links."""
+    from app.services.policy_service import normalise_policy_number
+    from app.services.portal import build_portal_payload
 
-    # 1. Policy topish
     policy = db.query(Policy).filter(
-        Policy.policy_number == data.policy_number.strip().upper()
+        Policy.policy_number == normalise_policy_number(data.policy_number)
     ).first()
-
     if not policy:
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
     if "cancelled" in str(policy.status).lower():
         raise HTTPException(status_code=403, detail="This policy has been cancelled")
 
-    # 2. Driver tekshirish
     driver = db.query(Driver).filter(Driver.id == policy.driver_id).first()
-    if not driver:
+    if not driver or driver.last_name.strip().lower() != data.last_name.strip().lower():
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
-    # 3. Last name tekshirish
-    if driver.last_name.strip().lower() != data.last_name.strip().lower():
-        raise HTTPException(status_code=400, detail="Invalid credentials")
-
-    # 4. DOB tekshirish
     try:
         input_dob = datetime.strptime(data.date_of_birth, "%Y-%m-%d").date()
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid date format")
-
-    driver_dob = driver.date_of_birth
-    if hasattr(driver_dob, 'date'):
-        driver_dob = driver_dob.date()
-
+    driver_dob = driver.date_of_birth.date() if hasattr(driver.date_of_birth, "date") else driver.date_of_birth
     if driver_dob != input_dob:
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
-    # 5. Vehicle
-    vehicle = db.query(Vehicle).filter(Vehicle.id == policy.vehicle_id).first()
-
-    # 6. Static documents
-    static_docs = db.query(StaticDocument).filter(
-        StaticDocument.is_active == True
-    ).all()
-
-    from app.config import settings
-    base = settings.APP_URL
-
-    return {
-        "driver": {
-            "first_name": driver.first_name,
-            "last_name":  driver.last_name,
-        },
-        "policy": {
-            "policy_number":  policy.policy_number,
-            "cover_type":     policy.cover_type,
-            "status":         policy.status,
-            "start_datetime": policy.start_datetime.strftime("%A, %d %B %Y at %H:%M") if policy.start_datetime else "",
-            "end_datetime":   policy.end_datetime.strftime("%A, %d %B %Y at %H:%M") if policy.end_datetime else "",
-            "price":          str(policy.price),
-        },
-        "vehicle": {
-            "registration": vehicle.registration if vehicle else "",
-            "make":         vehicle.make if vehicle else "",
-            "model":        vehicle.model if vehicle else "",
-            "colour":       vehicle.color if vehicle else "",
-        },
-        "dynamic_docs": [
-            {
-                "name": "Certificate of Motor Insurance",
-                "url":  f"{base}/api/v1/pdf/certificate/{policy.id}?token={policy.verify_token}",
-            },
-            {
-                "name": "New Policy Schedule",
-                "url":  f"{base}/api/v1/pdf/schedule/{policy.id}?token={policy.verify_token}",
-            },
-            {
-                "name": "Statement of Fact",
-                "url":  f"{base}/api/v1/pdf/statement/{policy.id}?token={policy.verify_token}",
-            },
-        ],
-        "static_docs": [
-            {"name": d.name, "url": d.url}
-            for d in static_docs
-        ],
-    }
+    return build_portal_payload(db, policy)
 
 
 # ── GET current active static documents (public, for driver portal refresh) ──

@@ -4,6 +4,9 @@ CertificateGenerator — HTML template based Certificate of Motor Insurance.
 
 import os
 from datetime import datetime
+
+from app.config import settings
+from app.services.branding import legal_footer_text
 from .models import PolicyData
 
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
@@ -44,6 +47,8 @@ def _render(policy: PolicyData) -> str:
         "{{ expiry_datetime }}":      _fmt(policy.end_datetime),
         "{{ logo_path }}":            logo_path,
         "{{ sign_path }}":            sign_path,
+        "{{ company_legal_name }}":   settings.COMPANY_LEGAL_NAME,
+        "{{ legal_footer }}":         legal_footer_text(),
     }
 
     for key, value in replacements.items():

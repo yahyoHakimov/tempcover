@@ -30,6 +30,23 @@ class Settings(BaseSettings):
     # Internal "house" agent the super admin acts as when issuing policies directly
     HOUSE_TENANT_USERNAME: str = "tempcover-hq"
 
+    # Brand / legal identity — printed in email footers and PDF footers.
+    # Leave a value blank to omit that line entirely (nothing is invented).
+    TRADING_NAME: str = "TempCover"
+    COMPANY_LEGAL_NAME: str = "TempCover Ltd"
+    COMPANY_REG_NO: str = ""
+    REGISTERED_OFFICE: str = ""
+    FCA_FRN: str = ""
+    UNDERWRITER_NAME: str = ""
+    UNDERWRITER_FRN: str = ""
+    POLICY_NUMBER_PREFIX: str = "TCV-MOT-"
+
+    # Policy lifecycle jobs (0 = disabled)
+    LIFECYCLE_TICK_SECONDS: int = 60
+    REMINDER_HOURS_BEFORE_EXPIRY: int = 24
+    AGENT_DIGEST_HOUR_UTC: int = 8
+    AGENT_DIGEST_DAYS_AHEAD: int = 3
+
     # First-run seed (see seed.py)
     SEED_SUPERADMIN_USERNAME: str = "superadmin"
     SEED_SUPERADMIN_PASSWORD: str = ""

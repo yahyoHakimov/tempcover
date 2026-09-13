@@ -44,6 +44,7 @@
           <span class="row-date"><span class="lbl">From</span>{{ fmtDateTime(p.start_datetime) }}</span>
           <span class="row-date"><span class="lbl">To</span>{{ fmtDateTime(p.end_datetime) }}</span>
           <span v-if="p.status === 'active' && timeLeft(p.end_datetime)" class="row-left">{{ timeLeft(p.end_datetime) }}</span>
+          <span v-else-if="p.status === 'pending' && timeUntil(p.start_datetime)" class="row-left pending">{{ timeUntil(p.start_datetime) }}</span>
         </div>
 
         <div class="row-price">{{ fmtMoney(p.price) }}</div>
@@ -66,7 +67,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '~/stores/auth'
 import { api } from '~/utils/api'
-import { fmtDateTime, fmtMoney, timeLeft } from '~/utils/format'
+import { fmtDateTime, fmtMoney, timeLeft, timeUntil } from '~/utils/format'
 
 definePageMeta({ layout: 'admin' })
 useHead({ title: 'Policies' })
@@ -79,12 +80,13 @@ const router = useRouter()
 const CHIPS = [
   { key: '',             label: 'All' },
   { key: 'active',       label: 'Active' },
+  { key: 'pending',      label: 'Pending' },
   { key: 'expiring3',    label: 'Expiring in 3 days' },
   { key: 'expiringweek', label: 'Expiring this week' },
   { key: 'expired',      label: 'Expired' },
   { key: 'cancelled',    label: 'Cancelled' },
 ]
-const STATUS_FILTERS = ['active', 'cancelled', 'expired']
+const STATUS_FILTERS = ['active', 'pending', 'cancelled', 'expired']
 const EXPIRY_FILTERS = ['expiring3', 'expiringweek']
 
 const policies = ref([])
@@ -104,6 +106,7 @@ const heading = computed(() => {
     case 'expiring3':    return { title: 'Expiring within 3 days', subtitle: 'Urgent renewals needed' }
     case 'expiringweek': return { title: 'Expiring this week',     subtitle: 'Weekly renewal overview' }
     case 'active':       return { title: 'Active Policies',        subtitle: 'Policies currently in force' }
+    case 'pending':      return { title: 'Pending Policies',       subtitle: 'Issued, cover has not started yet' }
     case 'expired':      return { title: 'Expired Policies',       subtitle: 'Policies past their end date' }
     case 'cancelled':    return { title: 'Cancelled Policies',     subtitle: 'Policies cancelled before their end date' }
     default:             return { title: 'Created Policies',       subtitle: 'All policies created by your account' }
@@ -188,6 +191,7 @@ onMounted(() => { load(); loadLookups() })
 .row-dates { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.82rem; color: var(--text-secondary); }
 .row-date .lbl { display: inline-block; width: 38px; color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.4px; }
 .row-left { font-size: 0.74rem; color: var(--brand-600); font-weight: 500; margin-top: 0.1rem; }
+.row-left.pending { color: var(--warning); }
 
 .row-price { font-weight: 700; color: var(--text-primary); font-size: 1rem; white-space: nowrap; }
 

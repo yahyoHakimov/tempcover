@@ -22,14 +22,22 @@
               <span class="meta-dot">·</span>
               <span class="meta-left">{{ timeLeft(data.policy.end_datetime) }}</span>
             </template>
+            <template v-else-if="data.policy.status === 'pending' && timeUntil(data.policy.start_datetime)">
+              <span class="meta-dot">·</span>
+              <span class="meta-pending">{{ timeUntil(data.policy.start_datetime) }}</span>
+            </template>
+            <template v-if="data.policy.version > 1">
+              <span class="meta-dot">·</span>
+              <span class="meta-version">Version {{ data.policy.version }} · mid-term adjustment</span>
+            </template>
           </div>
         </div>
         <div class="head-actions">
-          <NuxtLink :to="`/admin/policies/edit/${route.params.id}`" class="g-btn g-btn-ghost">
+          <NuxtLink v-if="isLive" :to="`/admin/policies/edit/${route.params.id}`" class="g-btn g-btn-ghost">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             Edit
           </NuxtLink>
-          <button v-if="data.policy.status === 'active'" class="g-btn g-btn-danger" @click="cancelPolicy" :disabled="busy">Cancel policy</button>
+          <button v-if="isLive" class="g-btn g-btn-danger" @click="cancelOpen = true" :disabled="busy">Cancel policy</button>
         </div>
       </div>
 
@@ -38,21 +46,27 @@
         <!-- Cover -->
         <div class="g-card">
           <div class="g-section-title">Cover</div>
-          <div class="g-info-row"><span class="g-info-label">Cover type</span><span class="g-info-value">{{ coverLabel(data.policy.cover_type) }}</span></div>
+          <div class="g-info-row"><span class="g-info-label">Cover type</span><span class="g-info-value">{{ data.policy.cover_label || coverLabel(data.policy.cover_type) }}</span></div>
           <div class="g-info-row"><span class="g-info-label">Starts</span><span class="g-info-value">{{ fmtDateTimeLong(data.policy.start_datetime) }}</span></div>
           <div class="g-info-row"><span class="g-info-label">Ends</span><span class="g-info-value">{{ fmtDateTimeLong(data.policy.end_datetime) }}</span></div>
           <div class="g-info-row"><span class="g-info-label">Price</span><span class="g-info-value price">{{ fmtMoney(data.policy.price) }}</span></div>
           <div class="g-info-row"><span class="g-info-label">Email</span>
             <span class="g-info-value">
               <span class="g-badge" :class="data.policy.email_sent ? 'g-badge-active' : 'g-badge-pending'">{{ data.policy.email_sent ? 'Sent' : 'Pending' }}</span>
+              <span v-if="data.policy.email_sent_at" class="muted"> · {{ fmtDateTime(data.policy.email_sent_at) }}</span>
             </span>
+          </div>
+          <div v-if="data.policy.status === 'cancelled'" class="g-info-row"><span class="g-info-label">Cancelled</span>
+            <span class="g-info-value">{{ fmtDateTime(data.policy.cancelled_at) }}<span v-if="data.policy.cancellation_reason" class="muted"> · {{ data.policy.cancellation_reason }}</span></span>
           </div>
         </div>
 
         <!-- Documents -->
         <div class="g-card">
           <div class="g-section-title">Documents</div>
-          <p class="docs-note">Generated from the current policy details.</p>
+          <p v-if="data.policy.status === 'cancelled'" class="docs-note">This policy is cancelled — its documents are no longer valid and cannot be sent.</p>
+          <template v-else>
+          <p class="docs-note">Generated from the current policy details<span v-if="data.policy.version > 1"> (version {{ data.policy.version }})</span>. The driver opens them from the emailed link.</p>
           <button class="doc-btn" @click="openPdf('certificate')" :disabled="busy">
             <span class="doc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
             <span class="doc-name">Certificate of Motor Insurance</span>
@@ -70,8 +84,9 @@
           </button>
           <button class="g-btn g-btn-secondary resend" @click="resendEmail" :disabled="busy">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            {{ busy === 'email' ? 'Sending…' : 'Resend confirmation email' }}
+            {{ busy === 'email' ? 'Sending…' : (data.policy.version > 1 ? 'Resend updated documents' : 'Resend confirmation email') }}
           </button>
+          </template>
         </div>
 
         <!-- Policy holder -->
@@ -98,6 +113,28 @@
 
       </div>
     </div>
+
+    <!-- Cancel modal -->
+    <div v-if="cancelOpen" class="modal-backdrop" @click.self="cancelOpen = false">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cancel-title">
+        <h2 id="cancel-title" class="modal-title">Cancel policy {{ data?.policy.policy_number }}</h2>
+        <p class="modal-text">Cover ends immediately and the driver is emailed a cancellation notice. This cannot be undone.</p>
+        <div class="g-field" style="margin-bottom:0.9rem;">
+          <label>Reason</label>
+          <select v-model="cancelReason">
+            <option v-for="r in CANCEL_REASONS" :key="r" :value="r">{{ r }}</option>
+          </select>
+        </div>
+        <div class="g-field" v-if="cancelReason === 'Other'">
+          <label>Details</label>
+          <input v-model.trim="cancelNote" type="text" maxlength="200" placeholder="Short note for the record" />
+        </div>
+        <div class="modal-actions">
+          <button class="g-btn g-btn-ghost" @click="cancelOpen = false" :disabled="busy">Keep policy</button>
+          <button class="g-btn g-btn-danger" @click="confirmCancel" :disabled="busy">{{ busy === 'cancel' ? 'Cancelling…' : 'Cancel policy' }}</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -106,7 +143,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '~/stores/auth'
 import { api } from '~/utils/api'
-import { fmtDateTime, fmtDateTimeLong, fmtDOB, fmtMoney, timeLeft } from '~/utils/format'
+import { fmtDateTime, fmtDateTimeLong, fmtDOB, fmtMoney, timeLeft, timeUntil } from '~/utils/format'
 
 definePageMeta({ layout: 'admin' })
 
@@ -119,6 +156,12 @@ const loading = ref(true)
 const busy = ref(false)
 const toast = ref({ show: false, message: '', type: 'success' })
 const breadcrumbs = ref([{ label: 'Policies', to: '/admin/policies' }, { label: 'Policy' }])
+
+const CANCEL_REASONS = ['Customer request', 'Issued in error', 'Payment not received', 'Vehicle no longer required', 'Other']
+const cancelOpen = ref(false)
+const cancelReason = ref(CANCEL_REASONS[0])
+const cancelNote = ref('')
+const isLive = computed(() => ['active', 'pending'].includes(data.value?.policy?.status))
 
 useHead({ title: computed(() => data.value ? `Policy ${data.value.policy.policy_number}` : 'Policy') })
 
@@ -151,13 +194,16 @@ async function load() {
   } finally { loading.value = false }
 }
 
-async function cancelPolicy() {
-  if (!confirm(`Cancel policy ${data.value.policy.policy_number}? The driver will be notified by email.`)) return
+async function confirmCancel() {
   busy.value = 'cancel'
   try {
-    await api.delete(`/api/policies/${route.params.id}`, auth.token)
-    data.value.policy.status = 'cancelled'
-    showToast('Policy cancelled')
+    const reason = cancelReason.value === 'Other' ? (cancelNote.value || 'Other') : cancelReason.value
+    const updated = await api.post(`/api/policies/${route.params.id}/cancel`, { reason }, auth.token)
+    data.value.policy.status = updated.status
+    data.value.policy.cancelled_at = updated.cancelled_at
+    data.value.policy.cancellation_reason = updated.cancellation_reason
+    cancelOpen.value = false
+    showToast('Policy cancelled — the driver has been notified')
   } catch (e) { showToast(e.message, 'error') }
   finally { busy.value = false }
 }
@@ -208,6 +254,15 @@ onMounted(load)
 .meta-dot { color: var(--gray-300); }
 .meta-text { color: var(--text-muted); }
 .meta-left { color: var(--brand-600); font-weight: 500; }
+.meta-pending { color: var(--warning); font-weight: 500; }
+.meta-version { color: var(--text-secondary); }
+.muted { color: var(--text-muted); font-weight: 400; }
+
+.modal-backdrop { position: fixed; inset: 0; background: rgba(17,24,39,0.45); display: flex; align-items: center; justify-content: center; padding: 1rem; z-index: 100; }
+.modal { background: white; border-radius: 14px; padding: 1.5rem; width: 100%; max-width: 440px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+.modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+.modal-text { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.1rem; }
+.modal-actions { display: flex; gap: 0.6rem; justify-content: flex-end; margin-top: 1.25rem; }
 .head-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
 
 .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }

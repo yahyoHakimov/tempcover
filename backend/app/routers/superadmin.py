@@ -22,7 +22,8 @@ from app.models.models import (
     PolicyStatus, TenantStatus, TenantPlan, CoverType, VehicleValueRange
 )
 from app.utils.security import hash_password
-from app.services.email_service import send_policy_confirmation_email, send_policy_cancellation_email
+from app.services import policy_service as ps
+from app.services.branding import cover_label
 from app.config import settings
 
 router = APIRouter()
@@ -36,11 +37,6 @@ def fmt_dt(dt) -> str:
     if hasattr(dt, 'isoformat'):
         return dt.isoformat()
     return str(dt)
-
-
-def generate_policy_number() -> str:
-    digits = ''.join(random.choices(string.digits, k=8))
-    return digits
 
 
 # ── Schemas ───────────────────────────────────
@@ -610,12 +606,13 @@ def get_all_policies(
 
     results = query.order_by(Policy.issued_at.desc()).all()
 
-    # Auto-expire policies
-    from datetime import datetime, timezone
-    now = datetime.now(timezone.utc)
-    for policy, tenant in results:
-        if policy.status.value == "active" and policy.end_datetime and policy.end_datetime < now:
-            policy.status = PolicyStatus.EXPIRED
+    # Lazy pending→active / →expired sync between background ticks
+    now = ps.utcnow()
+    for policy, _t in results:
+        if policy.status in (PolicyStatus.ACTIVE, PolicyStatus.PENDING) and policy.start_datetime and policy.end_datetime:
+            new = ps.status_for(policy.start_datetime, policy.end_datetime, now)
+            if new != policy.status:
+                policy.status = new
     db.commit()
 
     policies = []
@@ -633,6 +630,7 @@ def get_all_policies(
             "end_datetime":   fmt_dt(policy.end_datetime),
             "email_sent":     policy.email_sent,
             "issued_at":      fmt_dt(policy.issued_at),
+            "version":        policy.version or 1,
             "agent": {
                 "id":       str(tenant.id),
                 "name":     tenant.name,
@@ -664,113 +662,31 @@ def create_policy(
     if not tenant:
         raise HTTPException(status_code=404, detail="Agent not found")
 
-    driver = db.query(Driver).filter(
-        Driver.id == data.driver_id,
-        Driver.tenant_id == data.tenant_id,
-    ).first()
+    driver = db.query(Driver).filter(Driver.id == data.driver_id, Driver.tenant_id == data.tenant_id).first()
     if not driver:
         raise HTTPException(status_code=404, detail="Driver not found")
-
-    vehicle = db.query(Vehicle).filter(
-        Vehicle.id == data.vehicle_id,
-        Vehicle.tenant_id == data.tenant_id,
-    ).first()
+    vehicle = db.query(Vehicle).filter(Vehicle.id == data.vehicle_id, Vehicle.tenant_id == data.tenant_id).first()
     if not vehicle:
         raise HTTPException(status_code=404, detail="Vehicle not found")
 
-    policy_number = generate_policy_number()
-    verify_token = str(uuid.uuid4()).replace('-', '')[:32]
-
-    policy = None
-    for _ in range(10):
-        policy = Policy(
-            tenant_id=data.tenant_id,
-            driver_id=data.driver_id,
-            vehicle_id=data.vehicle_id,
-            policy_number=policy_number,
-            start_datetime=datetime.fromisoformat(data.start_datetime),
-            end_datetime=datetime.fromisoformat(data.end_datetime),
-            price=data.price,
-            cover_type=data.cover_type,
-            status=PolicyStatus.ACTIVE,
-            verify_token=verify_token,
-            email_sent=False,
+    try:
+        policy = ps.create_policy(
+            db, tenant_id=data.tenant_id, driver_id=data.driver_id, vehicle_id=data.vehicle_id,
+            start=ps.parse_dt(data.start_datetime), end=ps.parse_dt(data.end_datetime),
+            price=data.price, cover_type=data.cover_type,
         )
-        db.add(policy)
-        try:
-            db.commit()
-            db.refresh(policy)
-            break
-        except IntegrityError:
-            db.rollback()
-            policy = None
-    else:
-        raise HTTPException(status_code=500, detail="Could not generate unique policy number")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-    background_tasks.add_task(
-        _send_confirmation_email,
-        policy_id=str(policy.id),
-        to_email=driver.email,
-        driver_name=f"{driver.first_name} {driver.last_name}",
-        policy_number=policy.policy_number,
-        start_datetime=policy.start_datetime.strftime("%d %B %Y at %H:%M") if hasattr(policy.start_datetime, 'strftime') else str(policy.start_datetime),
-        end_datetime=policy.end_datetime.strftime("%d %B %Y at %H:%M") if hasattr(policy.end_datetime, 'strftime') else str(policy.end_datetime),
-        vehicle_reg=vehicle.registration,
-        vehicle_make_model=f"{vehicle.make} {vehicle.model}",
-        price=str(policy.price),
-        verify_token=policy.verify_token,
-    )
-
+    ps.queue_policy_email(background_tasks, policy.id, "confirmation")
     return {
         "id":            str(policy.id),
         "policy_number": policy.policy_number,
         "status":        policy.status,
         "issued_at":     fmt_dt(policy.issued_at),
     }
-
-
-def _send_confirmation_email(
-    policy_id: str,
-    to_email: str,
-    driver_name: str,
-    policy_number: str,
-    start_datetime: str,
-    end_datetime: str,
-    vehicle_reg: str,
-    vehicle_make_model: str,
-    price: str,
-    verify_token: str,
-):
-    from sqlalchemy import create_engine
-    from sqlalchemy.orm import sessionmaker
-    from app.models.models import Policy as PolicyModel
-
-    engine = create_engine(settings.DATABASE_URL)
-    SessionLocal = sessionmaker(bind=engine)
-    db = SessionLocal()
-
-    try:
-        success = send_policy_confirmation_email(
-            to_email=to_email,
-            driver_name=driver_name,
-            policy_number=policy_number,
-            start_datetime=start_datetime,
-            end_datetime=end_datetime,
-            vehicle_reg=vehicle_reg,
-            vehicle_make_model=vehicle_make_model,
-            price=price,
-            verify_token=verify_token,
-        )
-
-        if success:
-            p = db.query(PolicyModel).filter(PolicyModel.id == policy_id).first()
-            if p:
-                from datetime import datetime, timezone
-                p.email_sent = True
-                p.email_sent_at = datetime.now(timezone.utc)
-                db.commit()
-    finally:
-        db.close()
 
 
 @router.get("/policies/{policy_id}")
@@ -802,6 +718,10 @@ def get_policy_detail(
             "voluntary_excess":  float(policy.voluntary_excess),
             "email_sent":        policy.email_sent,
             "issued_at":         fmt_dt(policy.issued_at),
+            "cover_label":       cover_label(policy.cover_type),
+            "version":           policy.version or 1,
+            "cancelled_at":      fmt_dt(policy.cancelled_at) or None,
+            "cancellation_reason": policy.cancellation_reason,
         },
         "agent": {
             "id":       str(tenant.id),
@@ -839,6 +759,7 @@ def get_policy_detail(
 def update_policy(
     policy_id: UUID,
     data: PolicyUpdate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: dict = Depends(require_super_admin),
 ):
@@ -846,19 +767,27 @@ def update_policy(
     if not policy:
         raise HTTPException(status_code=404, detail="Policy not found")
 
-    if data.start_datetime is not None:
-        policy.start_datetime = datetime.fromisoformat(data.start_datetime)
-    if data.end_datetime is not None:
-        policy.end_datetime = datetime.fromisoformat(data.end_datetime)
-    if data.price is not None:
-        policy.price = data.price
-    if data.cover_type is not None:
-        policy.cover_type = data.cover_type
-    if data.status is not None:
+    try:
+        changed = ps.apply_update(
+            policy,
+            start=ps.parse_dt(data.start_datetime) if data.start_datetime is not None else None,
+            end=ps.parse_dt(data.end_datetime) if data.end_datetime is not None else None,
+            price=data.price,
+            cover_type=data.cover_type,
+        )
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+
+    if data.status is not None:              # super admin may force a status
         policy.status = data.status
 
     db.commit()
     db.refresh(policy)
+    if changed and policy.status != PolicyStatus.CANCELLED:
+        policy.email_sent = False
+        db.commit()
+        ps.queue_policy_email(background_tasks, policy.id, "updated")
 
     return {
         "id":             str(policy.id),
@@ -870,7 +799,27 @@ def update_policy(
         "end_datetime":   fmt_dt(policy.end_datetime),
         "email_sent":     policy.email_sent,
         "issued_at":      fmt_dt(policy.issued_at),
+        "version":        policy.version or 1,
     }
+
+
+class PolicyCancel(BaseModel):
+    reason: Optional[str] = None
+
+
+@router.post("/policies/{policy_id}/cancel")
+def cancel_policy_with_reason(
+    policy_id: UUID,
+    data: PolicyCancel,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(require_super_admin),
+):
+    policy = db.query(Policy).filter(Policy.id == policy_id).first()
+    if not policy:
+        raise HTTPException(status_code=404, detail="Policy not found")
+    ps.cancel(db, policy, data.reason, background_tasks)
+    return {"message": "Policy cancelled", "status": policy.status, "cancellation_reason": policy.cancellation_reason}
 
 
 @router.delete("/policies/{policy_id}")
@@ -883,21 +832,7 @@ def cancel_policy(
     policy = db.query(Policy).filter(Policy.id == policy_id).first()
     if not policy:
         raise HTTPException(status_code=404, detail="Policy not found")
-
-    was_already_cancelled = policy.status == PolicyStatus.CANCELLED
-    driver = policy.driver
-
-    policy.status = PolicyStatus.CANCELLED
-    db.commit()
-
-    if not was_already_cancelled and driver and driver.email:
-        background_tasks.add_task(
-            send_policy_cancellation_email,
-            to_email=driver.email,
-            driver_name=f"{driver.first_name} {driver.last_name}",
-            policy_number=policy.policy_number,
-        )
-
+    ps.cancel(db, policy, None, background_tasks)
     return {"message": "Policy cancelled"}
 
 

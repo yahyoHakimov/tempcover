@@ -3,6 +3,7 @@ import io
 from pypdf import PdfWriter, PdfReader
 
 from app.models.models import Policy
+from app.services.branding import cover_label
 from .models import PolicyData
 from .certificate import CertificateGenerator
 from .schedule import ScheduleGenerator
@@ -57,8 +58,11 @@ class PDFService:
             telephone            = getattr(driver, "mobile", "") or "",
             email                = getattr(driver, "email", "") or "",
             driver_dob           = dob_str,
-            driver_licence_type  = getattr(driver, "driving_licence", "Full UK Licence") or "Full UK Licence",
+            driver_licence_type  = "Full UK Licence",
             driver_occupation    = getattr(driver, "occupation", "") or "",
+            policy_cover         = cover_label(policy.cover_type),
+            agent_name           = policy.tenant.name if getattr(policy, "tenant", None) else "",
+            version              = policy.version or 1,
         )
 
     @classmethod

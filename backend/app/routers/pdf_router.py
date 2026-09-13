@@ -17,7 +17,7 @@ router = APIRouter(prefix="/api/v1/pdf", tags=["PDF"])
 def _get_policy_by_id(policy_id: uuid.UUID, db: Session) -> Policy:
     policy = (
         db.query(Policy)
-        .options(joinedload(Policy.driver), joinedload(Policy.vehicle))
+        .options(joinedload(Policy.driver), joinedload(Policy.vehicle), joinedload(Policy.tenant))
         .filter(Policy.id == policy_id)
         .first()
     )
@@ -29,7 +29,7 @@ def _get_policy_by_id(policy_id: uuid.UUID, db: Session) -> Policy:
 def _get_policy_by_token(policy_id: uuid.UUID, token: str, db: Session) -> Policy:
     policy = (
         db.query(Policy)
-        .options(joinedload(Policy.driver), joinedload(Policy.vehicle))
+        .options(joinedload(Policy.driver), joinedload(Policy.vehicle), joinedload(Policy.tenant))
         .filter(Policy.id == policy_id, Policy.verify_token == token)
         .first()
     )

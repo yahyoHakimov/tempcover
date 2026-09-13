@@ -17,7 +17,8 @@ drivers receive their documents by email and view them in a self-service portal.
 | `/admin/policies`, `/admin/policies/create`, `/admin/policies/<id>` | agent | manage policies (PDFs, resend email, cancel) |
 | `/admin/drivers` | agent | saved drivers |
 | `/superadmin/**` | super admin | agents, all policies, drivers, static documents |
-| `/driver/login`, `/driver/portal` | driver | policy documents (policy no. + surname + DOB) |
+| `/driver/login` | driver | sign in with policy no. + surname + date of birth |
+| `/verifydetailspolicy/complete/<policy no.>` | driver | policy details + documents (opened from the email link with `?t=<token>`, or after signing in) |
 | `/` | — | redirects to `/driver/login` |
 
 ## Local development
@@ -54,13 +55,27 @@ npm ci
 PORT=3001 npm run dev            # http://localhost:3001
 ```
 
-Tables are created automatically on first start (`Base.metadata.create_all`); use Alembic
-(`backend/alembic/`) for later schema changes. With `BREVO_API_KEY` empty, emails are not sent —
+Schema is managed with Alembic: `alembic upgrade head` (run.sh and the Docker image do this on start). With `BREVO_API_KEY` empty, emails are not sent —
 the confirmation is printed to the backend log instead.
 
 First login: `/admin/login` with `SEED_SUPERADMIN_USERNAME` / `SEED_SUPERADMIN_PASSWORD`, then
 **Agents → Add Agent** to create an agent account (set an expiry date to drive the dashboard
 countdown). Agents sign in on the same page.
+
+## Policy lifecycle
+
+| Event | What happens |
+|---|---|
+| Agent creates a policy | number `TCV-MOT-XXXXXXXX`; status `pending` if the start is in the future, else `active`; confirmation email with a one-click documents link |
+| Start time reached | background job flips `pending → active` (every `LIFECYCLE_TICK_SECONDS`) |
+| Agent edits dates/price/cover | mid-term adjustment: `version` +1, `reason_for_issue = MTA`, documents re-issued and emailed |
+| 24 h before the end | driver gets an expiry reminder (once); agents get a daily digest of policies ending within 3 days |
+| End time passed | `active → expired`; documents stay readable for the driver's records |
+| Cancel (`POST /api/policies/{id}/cancel {reason}`) | status `cancelled` + reason + timestamp, driver emailed, documents and the link stop working |
+
+Emails return `sent` / `skipped` / `failed`; only `sent` marks a policy as emailed. With `BREVO_API_KEY` empty everything is `skipped` and printed to `logs/backend.log`.
+
+Documents (WeasyPrint from `backend/app/services/pdf_service/templates/`): Certificate of Motor Insurance, Policy Schedule, Statement of Fact — generated per policy; Policy Wording, IPID, contract etc. are uploaded once by the super admin under **Settings** and listed automatically.
 
 ## Configuration (`backend/.env`, see `.env.example`)
 
@@ -73,6 +88,9 @@ countdown). Agents sign in on the same page.
 | `STATIC_DIR` | where uploaded static documents are stored (`/app/static` in Docker) |
 | `BREVO_API_KEY`, `FROM_EMAIL`, `FROM_NAME`, `SUPPORT_EMAIL` | transactional email |
 | `SEED_SUPERADMIN_*`, `HOUSE_TENANT_USERNAME` | first-run seed (`python seed.py`) |
+| `TRADING_NAME`, `COMPANY_LEGAL_NAME`, `COMPANY_REG_NO`, `REGISTERED_OFFICE`, `FCA_FRN`, `UNDERWRITER_NAME`, `UNDERWRITER_FRN` | legal identity printed in email + PDF footers (blank = line omitted) |
+| `POLICY_NUMBER_PREFIX` | default `TCV-MOT-` |
+| `LIFECYCLE_TICK_SECONDS`, `REMINDER_HOURS_BEFORE_EXPIRY`, `AGENT_DIGEST_HOUR_UTC`, `AGENT_DIGEST_DAYS_AHEAD` | lifecycle jobs (0 disables) |
 
 Frontend: `NUXT_PUBLIC_API_BASE` — leave empty in production (same-origin `/api`).
 

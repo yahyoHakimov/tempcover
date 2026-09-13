@@ -14,7 +14,7 @@
         <form @submit.prevent="handleLogin" novalidate>
           <div class="field">
             <label for="pn">Policy number</label>
-            <input id="pn" v-model.trim="form.policy_number" type="text" inputmode="numeric" placeholder="e.g. 12345678" autocomplete="off" />
+            <input id="pn" v-model.trim="form.policy_number" type="text" inputmode="numeric" placeholder="e.g. TCV-MOT-12345678" autocomplete="off" />
           </div>
           <div class="field">
             <label for="ln">Last name</label>
@@ -31,7 +31,7 @@
           </button>
         </form>
 
-        <p class="hint">Your policy number is in your confirmation email.</p>
+        <p class="hint">Your policy number starts with TCV-MOT and is in your confirmation email.</p>
       </div>
 
       <p class="foot">
@@ -48,7 +48,8 @@ import { api } from '~/utils/api'
 definePageMeta({ layout: false })
 useHead({ title: 'My Insurance' })
 
-const form = ref({ policy_number: '', last_name: '', date_of_birth: '' })
+const route = useRoute()
+const form = ref({ policy_number: String(route.query.ref || ''), last_name: '', date_of_birth: '' })
 const error = ref('')
 const loading = ref(false)
 
@@ -66,7 +67,7 @@ async function handleLogin() {
       date_of_birth: form.value.date_of_birth,
     })
     localStorage.setItem('driver_portal_data', JSON.stringify(data))
-    navigateTo('/driver/portal')
+    navigateTo(`/verifydetailspolicy/complete/${encodeURIComponent(data.policy.policy_number)}`)
   } catch (e) {
     error.value = /cancelled/i.test(e.message)
       ? 'This policy has been cancelled. Please contact us if you need help.'

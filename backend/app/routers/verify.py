@@ -169,3 +169,28 @@ def _fmt_display(dt) -> str:
     if hasattr(dt, 'strftime'):
         return dt.strftime("%A, %d %B %Y at %H:%M")
     return str(dt)
+
+# ── Emailed documents link ───────────────────────────────────────────────────
+
+@router.get("/policy/{policy_number}")
+def get_policy_by_link(policy_number: str, t: str, db: Session = Depends(get_db)):
+    """
+    Opened from the 'View your policy documents' button in the email.
+    The policy number is in the URL, the per-policy token in ?t= — both must match.
+    """
+    from app.services.policy_service import normalise_policy_number
+    from app.services.portal import build_portal_payload
+
+    policy = db.query(Policy).filter(
+        Policy.policy_number == normalise_policy_number(policy_number),
+        Policy.verify_token == t,
+    ).first()
+    if not policy:
+        raise HTTPException(status_code=404, detail="This link is not valid. Please sign in with your policy details.")
+    if str(policy.status).lower().endswith("cancelled"):
+        raise HTTPException(status_code=403, detail="This policy has been cancelled")
+
+    if not policy.verified_at:
+        policy.verified_at = datetime.now(timezone.utc)
+        db.commit()
+    return build_portal_payload(db, policy)

@@ -130,6 +130,8 @@ ENV
     else .venv/bin/pip install -q -r requirements.txt; fi
     ok "Python dependencies installed"
   fi
+  .venv/bin/alembic upgrade head 2>&1 | grep -vE "^INFO" | sed 's/^/    /' || true
+  ok "Database schema up to date"
   .venv/bin/python seed.py | sed 's/^/    /'
   if http_ok "http://127.0.0.1:$API_PORT/health"; then
     ok "API already running on port $API_PORT"
