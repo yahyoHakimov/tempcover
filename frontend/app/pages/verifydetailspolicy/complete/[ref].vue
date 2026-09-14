@@ -55,7 +55,7 @@
           </div>
         </section>
 
-        <NuxtLink to="/driver/login" class="btn-home">Home</NuxtLink>
+        <a href="https://www.tempcover.com/hp-new/bk-new" class="btn-home">Home</a>
       </template>
     </main>
 

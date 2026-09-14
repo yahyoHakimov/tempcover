@@ -167,7 +167,8 @@ def _fmt_display(dt) -> str:
     if dt is None:
         return ""
     if hasattr(dt, 'strftime'):
-        return dt.strftime("%A, %d %B %Y at %H:%M")
+        from app.services.policy_service import to_local
+        return to_local(dt).strftime("%A, %d %B %Y at %H:%M")
     return str(dt)
 
 # ── Emailed documents link ───────────────────────────────────────────────────

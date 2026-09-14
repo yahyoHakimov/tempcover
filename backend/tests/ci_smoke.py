@@ -73,7 +73,22 @@ def check_email() -> None:
     print("  email        mavzu va taqsimot — ok")
 
 
+def check_timezone() -> None:
+    """Agent kiritgan vaqt UK devor soati: yozda (BST) UTC dan 1 soat oldinda, qishda teng."""
+    from datetime import datetime, timezone
+    from app.services.policy_service import parse_dt, to_local, fmt_display
+    summer = parse_dt("2026-09-14T08:15")
+    winter = parse_dt("2026-01-14T08:15")
+    assert summer == datetime(2026, 9, 14, 7, 15, tzinfo=timezone.utc), summer
+    assert winter == datetime(2026, 1, 14, 8, 15, tzinfo=timezone.utc), winter
+    assert to_local(summer).strftime("%H:%M") == "08:15"
+    assert fmt_display(summer) == "Monday, 14 September 2026 at 8:15 AM", fmt_display(summer)
+    print("  vaqt zonasi   BST/GMT — ok")
+
+
 if __name__ == "__main__":
+    print("Timezone:")
+    check_timezone()
     print("PDF:")
     check_pdfs()
     print("Email:")

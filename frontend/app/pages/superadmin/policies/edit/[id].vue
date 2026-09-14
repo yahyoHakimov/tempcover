@@ -87,6 +87,7 @@
 </template>
 
 <script setup>
+import { splitDateTime } from '~/utils/format'
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '~/stores/auth'
@@ -118,14 +119,8 @@ function showToast(msg, type = 'success') {
   setTimeout(() => (toast.value.show = false), 4000)
 }
 
-function parseDatetime(iso) {
-  if (!iso) return { date: '', time: '' }
-  const dt = new Date(iso)
-  return {
-    date: dt.toISOString().slice(0, 10),
-    time: dt.toTimeString().slice(0, 5),
-  }
-}
+// Vaqtlar UK zonasida (Europe/London) ko'rsatiladi — utils/format.ts bilan bir xil
+const parseDatetime = splitDateTime
 
 onMounted(async () => {
   try {

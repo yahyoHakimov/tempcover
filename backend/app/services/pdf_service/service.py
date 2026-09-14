@@ -4,6 +4,7 @@ from pypdf import PdfWriter, PdfReader
 
 from app.models.models import Policy
 from app.services.branding import cover_label
+from app.services.policy_service import to_local
 from .models import PolicyData
 from .certificate import CertificateGenerator
 from .schedule import ScheduleGenerator
@@ -41,9 +42,10 @@ class PDFService:
         return PolicyData(
             policy_number        = policy.policy_number,
             insured_name         = f"{driver.first_name} {driver.last_name}",
-            start_datetime       = policy.start_datetime,
-            end_datetime         = policy.end_datetime,
-            issued_at            = policy.issued_at,
+            # Hujjatlarda UK devor soati (bazada UTC)
+            start_datetime       = to_local(policy.start_datetime),
+            end_datetime         = to_local(policy.end_datetime),
+            issued_at            = to_local(policy.issued_at),
             vehicle_registration = vehicle.registration,
             vehicle_make         = vehicle.make,
             vehicle_model        = vehicle.model,

@@ -1,6 +1,8 @@
 // app/utils/format.ts — display helpers
-// Policy times are stored exactly as the agent typed them (no timezone), so they are shown in UTC
-// to match the PDF documents and emails.
+// Policy times are stored in UTC and shown in UK time (Europe/London) everywhere — the same
+// wall clock the agent typed and the one printed in the PDF documents and emails.
+
+const TZ = 'Europe/London'
 
 const GB = 'en-GB'
 
@@ -8,21 +10,21 @@ export function fmtDateTime(iso?: string | null): string {
   if (!iso) return '—'
   const d = new Date(iso)
   if (isNaN(d.getTime())) return String(iso)
-  return d.toLocaleString(GB, { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })
+  return d.toLocaleString(GB, { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: TZ })
 }
 
 export function fmtDateTimeLong(iso?: string | null): string {
   if (!iso) return '—'
   const d = new Date(iso)
   if (isNaN(d.getTime())) return String(iso)
-  return d.toLocaleString(GB, { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })
+  return d.toLocaleString(GB, { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: TZ })
 }
 
 export function fmtDate(iso?: string | null): string {
   if (!iso) return '—'
   const d = new Date(iso)
   if (isNaN(d.getTime())) return String(iso)
-  return d.toLocaleDateString(GB, { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' })
+  return d.toLocaleDateString(GB, { day: '2-digit', month: 'short', year: 'numeric', timeZone: TZ })
 }
 
 /** "YYYY-MM-DD" -> "12 March 1990" (no timezone shifting) */
@@ -50,13 +52,16 @@ export function timeLeft(iso?: string | null): string {
   return h >= 1 ? `${h}h ${m}m left` : `${m}m left`
 }
 
-/** ISO datetime -> { date: 'YYYY-MM-DD', time: 'HH:MM' } in UTC (round-trips what was entered) */
+/** ISO datetime -> { date: 'YYYY-MM-DD', time: 'HH:MM' } in UK time (round-trips what the agent entered) */
 export function splitDateTime(iso?: string | null): { date: string; time: string } {
   if (!iso) return { date: '', time: '' }
   const d = new Date(iso)
   if (isNaN(d.getTime())) return { date: '', time: '' }
-  const s = d.toISOString()
-  return { date: s.slice(0, 10), time: s.slice(11, 16) }
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+  }).formatToParts(d)
+  const get = (t: string) => parts.find(x => x.type === t)?.value ?? ''
+  return { date: `${get('year')}-${get('month')}-${get('day')}`, time: `${get('hour')}:${get('minute')}` }
 }
 
 /** Human "starts in" text for a pending policy; '' once started */

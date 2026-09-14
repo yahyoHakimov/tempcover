@@ -7,6 +7,7 @@ import random
 import string
 import uuid
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from typing import Optional
 
 from fastapi import BackgroundTasks
@@ -19,6 +20,19 @@ from app.models.models import Policy, PolicyStatus, ReasonForIssue, CoverType
 from app.services import email_service
 
 DISPLAY_DT = "%A, %d %B %Y at %-I:%M %p"   # Friday, 11 September 2026 at 9:18 PM
+
+# Agentlar vaqtni UK devor soati bo'yicha kiritadi (yozda BST = UTC+1). Bazada UTC
+# saqlanadi, ko'rsatishda (sayt, email, PDF) yana shu zonaga o'giriladi.
+POLICY_TZ = ZoneInfo("Europe/London")
+
+
+def to_local(dt: Optional[datetime]) -> Optional[datetime]:
+    """Bazadagi UTC vaqtni UK devor soatiga o'giradi (naive bo'lsa UTC deb oladi)."""
+    if dt is None:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(POLICY_TZ)
 
 
 def utcnow() -> datetime:
@@ -43,9 +57,14 @@ def normalise_policy_number(raw: str) -> str:
 
 
 def parse_dt(value: str) -> datetime:
-    """Policy times are entered as wall-clock values without a zone; they are stored as UTC."""
+    """Zonasiz kiritilgan vaqt UK devor soati (Europe/London) deb qabul qilinadi va UTC'da saqlanadi.
+
+    Ilgari UTC deb saqlanardi — yozda polis agent kiritgan vaqtdan bir soat kech boshlanardi
+    ("Your cover has not started yet" boshlanish vaqtidan keyin ham ko'rinardi)."""
     dt = datetime.fromisoformat(value)
-    return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=POLICY_TZ)
+    return dt.astimezone(timezone.utc)
 
 
 def status_for(start: datetime, end: datetime, now: Optional[datetime] = None) -> PolicyStatus:
@@ -58,11 +77,11 @@ def status_for(start: datetime, end: datetime, now: Optional[datetime] = None) -
 
 
 def fmt_email(dt: datetime) -> str:
-    return dt.strftime(email_service.EMAIL_DT) if dt else ""
+    return to_local(dt).strftime(email_service.EMAIL_DT) if dt else ""
 
 
 def fmt_display(dt: datetime) -> str:
-    return dt.strftime(DISPLAY_DT) if dt else ""
+    return to_local(dt).strftime(DISPLAY_DT) if dt else ""
 
 
 # ─────────────────────────────────────────────────────────────────────────────
