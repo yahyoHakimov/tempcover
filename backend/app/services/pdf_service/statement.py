@@ -32,6 +32,7 @@ def _render(policy: PolicyData) -> str:
     address = ", ".join(p for p in address_parts if p)
 
     replacements = {
+        "{{ policy_number }}":       policy.policy_number,   # faqat PDF sarlavhasi (tab nomi) uchun
         "{{ logo_fu }}":             f"file://{SIG_DIR}/first-underwriting.png",
         "{{ surname }}":             surname,
         "{{ forenames }}":           forenames,

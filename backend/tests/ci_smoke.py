@@ -47,8 +47,12 @@ def check_pdfs() -> None:
         assert data[:4] == b"%PDF", f"{name}: PDF emas"
         # ReportLab fallback bir necha KB — WeasyPrint yiqilganini shundan bilamiz
         assert len(data) > 15_000, f"{name}: WeasyPrint fallback ishladi ({len(data)} bayt)"
-        got = len(PdfReader(io.BytesIO(data)).pages)
+        reader = PdfReader(io.BytesIO(data))
+        got = len(reader.pages)
         assert got == pages, f"{name}: {got} sahifa, kutilgan {pages}"
+        # Brauzer tabida UUID emas, hujjat nomi ko'rinadi
+        title = (reader.metadata or {}).get("/Title", "")
+        assert POLICY.policy_number in str(title), f"{name}: PDF sarlavhasi yo'q ({title!r})"
         print(f"  {name:12s} {pages} sahifa, {len(data):,} bayt — ok")
 
 

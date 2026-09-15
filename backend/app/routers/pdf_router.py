@@ -55,7 +55,7 @@ def admin_get_certificate(
     pdf = PDFService.certificate(policy)
     return StreamingResponse(
         io.BytesIO(pdf), media_type="application/pdf",
-        headers={"Content-Disposition": f'inline; filename="cert_{policy.policy_number}.pdf"'},
+        headers={"Content-Disposition": f'inline; filename="Certificate of Motor Insurance - {policy.policy_number}.pdf"'},
     )
 
 
@@ -72,7 +72,7 @@ def admin_get_schedule(
     pdf = PDFService.schedule(policy)
     return StreamingResponse(
         io.BytesIO(pdf), media_type="application/pdf",
-        headers={"Content-Disposition": f'inline; filename="schedule_{policy.policy_number}.pdf"'},
+        headers={"Content-Disposition": f'inline; filename="New Policy Schedule - {policy.policy_number}.pdf"'},
     )
 
 
@@ -89,7 +89,7 @@ def admin_get_combined(
     pdf = PDFService.combined(policy)
     return StreamingResponse(
         io.BytesIO(pdf), media_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="policy_{policy.policy_number}.pdf"'},
+        headers={"Content-Disposition": f'attachment; filename="Policy Documents - {policy.policy_number}.pdf"'},
     )
 
 
@@ -105,7 +105,7 @@ def get_certificate(
     pdf = PDFService.certificate(policy)
     return StreamingResponse(
         io.BytesIO(pdf), media_type="application/pdf",
-        headers={"Content-Disposition": f'inline; filename="cert_{policy.policy_number}.pdf"'},
+        headers={"Content-Disposition": f'inline; filename="Certificate of Motor Insurance - {policy.policy_number}.pdf"'},
     )
 
 
@@ -119,7 +119,7 @@ def get_schedule(
     pdf = PDFService.schedule(policy)
     return StreamingResponse(
         io.BytesIO(pdf), media_type="application/pdf",
-        headers={"Content-Disposition": f'inline; filename="schedule_{policy.policy_number}.pdf"'},
+        headers={"Content-Disposition": f'inline; filename="New Policy Schedule - {policy.policy_number}.pdf"'},
     )
 
 
@@ -133,7 +133,7 @@ def get_combined(
     pdf = PDFService.combined(policy)
     return StreamingResponse(
         io.BytesIO(pdf), media_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="policy_{policy.policy_number}.pdf"'},
+        headers={"Content-Disposition": f'attachment; filename="Policy Documents - {policy.policy_number}.pdf"'},
     )
 
 
@@ -147,5 +147,5 @@ def get_statement(
     pdf = PDFService.statement(policy)
     return StreamingResponse(
         io.BytesIO(pdf), media_type="application/pdf",
-        headers={"Content-Disposition": f'inline; filename="statement_{policy.policy_number}.pdf"'},
+        headers={"Content-Disposition": f'inline; filename="Statement of Fact - {policy.policy_number}.pdf"'},
     )
