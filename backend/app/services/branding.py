@@ -28,7 +28,9 @@ def documents_url(policy_number: str, verify_token: str = "") -> str:
     sahifasiga olib boradi (polis raqami to'ldirilgan), familiya va tug'ilgan sana
     so'raladi, keyingina hujjatlar ko'rsatiladi. verify_token endi ishlatilmaydi —
     imzo mosligi uchun qoldirilgan."""
-    return f"{settings.APP_URL}/driver/login?ref={policy_number}"
+    # Yo'l nomi asl Tempcover'dagidek; "login" so'zi ataylab yo'q — Brevo shunday
+    # havolali xatlarni fishing deb ushlab qolgan edi (2026-09-15).
+    return f"{settings.APP_URL}/verifydetailspolicy?ref={policy_number}"
 
 
 def legal_lines() -> list[str]:

@@ -68,7 +68,7 @@ def check_email() -> None:
     # Asl xat: £20.00 = £10.80 + £1.30 (IPT 12%) + £7.90
     bd = email_service._calculate_breakdown(20.00)
     assert (bd["insurer_premium"], bd["ipt"], bd["fee"], bd["total"]) == ("10.80", "1.30", "7.90", "20.00"), bd
-    for needle in ("£10.80", "£1.30", "£7.90", "72 hours", "View your policy documents", "/driver/login?ref=TCV-MOT-90075767"):
+    for needle in ("£10.80", "£1.30", "£7.90", "72 hours", "View your policy documents", "/verifydetailspolicy?ref=TCV-MOT-90075767"):
         assert needle in html, f"emailda yo'q: {needle}"
     print("  email        mavzu va taqsimot — ok")
 

@@ -17,9 +17,9 @@ drivers receive their documents by email and view them in a self-service portal.
 | `/admin/policies`, `/admin/policies/create`, `/admin/policies/<id>` | agent | manage policies (PDFs, resend email, cancel) |
 | `/admin/drivers` | agent | saved drivers |
 | `/superadmin/**` | super admin | agents, all policies, drivers, static documents |
-| `/driver/login` | driver | sign in with policy no. + surname + date of birth |
-| `/verifydetailspolicy/complete/<policy no.>` | driver | policy details + documents — only after signing in (the email button links to `/driver/login?ref=<policy no.>` with the number prefilled, like the original Tempcover) |
-| `/` | — | redirects to `/driver/login` |
+| `/verifydetailspolicy` | driver | sign in with policy no. + surname + date of birth (`/driver/login` redirects here) |
+| `/verifydetailspolicy/complete/<policy no.>` | driver | policy details + documents — only after signing in (the email button links to `/verifydetailspolicy?ref=<policy no.>` with the number prefilled, like the original Tempcover) |
+| `/` | — | redirects to `/verifydetailspolicy` |
 
 ## Local development
 

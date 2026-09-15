@@ -1,7 +1,7 @@
 <template>
   <div class="docs-page">
     <header class="bar">
-      <NuxtLink to="/driver/login" aria-label="Home"><img src="/tempcover-logo-white.png" alt="TempCover" class="bar-logo" /></NuxtLink>
+      <NuxtLink to="/verifydetailspolicy" aria-label="Home"><img src="/tempcover-logo-white.png" alt="TempCover" class="bar-logo" /></NuxtLink>
     </header>
 
     <main class="wrap">
@@ -14,7 +14,7 @@
         <div class="error-card">
           <h2 class="h2">Policy documents</h2>
           <p class="error-text">{{ error }}</p>
-          <NuxtLink :to="`/driver/login?ref=${encodeURIComponent(policyRef)}`" class="btn-home">Sign in with your details</NuxtLink>
+          <NuxtLink :to="`/verifydetailspolicy?ref=${encodeURIComponent(policyRef)}`" class="btn-home">Sign in with your details</NuxtLink>
         </div>
       </template>
 
@@ -83,7 +83,7 @@ const status = computed(() => (data.value?.policy?.status || '').toLowerCase())
 onMounted(async () => {
   try {
     // Hujjatlar faqat kirishdan keyin (polis raqami + familiya + tug'ilgan sana).
-    // Emaildagi tugma /driver/login?ref=... ga olib keladi; eski xatlardagi ?t= havolalar
+    // Emaildagi tugma /verifydetailspolicy?ref=... ga olib keladi; eski xatlardagi ?t= havolalar
     // ham shu yerga yo'naltiriladi — token bilan so'roqsiz ochish yo'q.
     const stored = localStorage.getItem('driver_portal_data')
     const parsed = stored ? JSON.parse(stored) : null
@@ -91,7 +91,7 @@ onMounted(async () => {
       data.value = parsed
       return
     }
-    navigateTo(`/driver/login?ref=${encodeURIComponent(policyRef)}`, { replace: true })
+    navigateTo(`/verifydetailspolicy?ref=${encodeURIComponent(policyRef)}`, { replace: true })
   } catch (e) {
     error.value = e.message || 'We could not open this policy.'
   } finally {

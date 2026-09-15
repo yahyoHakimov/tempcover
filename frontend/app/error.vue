@@ -10,7 +10,7 @@
         The page you're looking for doesn't exist or may have moved.
       </p>
       <div class="actions">
-        <a href="/driver/login" class="btn-primary">My Insurance</a>
+        <a href="/verifydetailspolicy" class="btn-primary">My Insurance</a>
         <a href="/" class="btn-ghost">Home</a>
       </div>
     </div>

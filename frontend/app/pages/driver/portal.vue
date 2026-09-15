@@ -7,6 +7,6 @@ onMounted(() => {
     const d = JSON.parse(localStorage.getItem('driver_portal_data') || 'null')
     if (d?.policy?.policy_number) return navigateTo(`/verifydetailspolicy/complete/${encodeURIComponent(d.policy.policy_number)}`, { replace: true })
   } catch {}
-  navigateTo('/driver/login', { replace: true })
+  navigateTo('/verifydetailspolicy', { replace: true })
 })
 </script>
