@@ -12,10 +12,10 @@
       <div class="card">
         <h2 class="card-title">Policy Details</h2>
         <div class="form-grid">
-          <div class="field"><label>Start Date *</label><input v-model="policy.start_date" type="date" class="input" /></div>
-          <div class="field"><label>Start Time *</label><input v-model="policy.start_time" type="time" class="input" /></div>
-          <div class="field"><label>End Date *</label><input v-model="policy.end_date" type="date" class="input" /></div>
-          <div class="field"><label>End Time *</label><input v-model="policy.end_time" type="time" class="input" /></div>
+          <div class="field"><label>Start Date (UK time) *</label><input v-model="policy.start_date" type="date" class="input" /></div>
+          <div class="field"><label>Start Time (UK time) *</label><input v-model="policy.start_time" type="time" class="input" /></div>
+          <div class="field"><label>End Date (UK time) *</label><input v-model="policy.end_date" type="date" class="input" /></div>
+          <div class="field"><label>End Time (UK time) *</label><input v-model="policy.end_time" type="time" class="input" /></div>
           <div class="field"><label>Price (£) *</label><input v-model="policy.price" type="number" step="0.01" min="0" class="input" /></div>
           <div class="field">
             <label>Cover Type *</label>

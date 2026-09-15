@@ -112,11 +112,12 @@
         </div>
 
         <div class="g-form-grid">
-          <div class="g-field"><label>Start date *</label><input v-model="policy.start_date" type="date" /></div>
-          <div class="g-field"><label>Start time *</label><input v-model="policy.start_time" type="time" /></div>
-          <div class="g-field"><label>End date *</label><input v-model="policy.end_date" type="date" /></div>
-          <div class="g-field"><label>End time *</label><input v-model="policy.end_time" type="time" /></div>
+          <div class="g-field"><label>Start date (UK time) *</label><input v-model="policy.start_date" type="date" /></div>
+          <div class="g-field"><label>Start time (UK time) *</label><input v-model="policy.start_time" type="time" /></div>
+          <div class="g-field"><label>End date (UK time) *</label><input v-model="policy.end_date" type="date" /></div>
+          <div class="g-field"><label>End time (UK time) *</label><input v-model="policy.end_time" type="time" /></div>
         </div>
+        <p class="uk-hint">Cover times are UK time (London), as printed on the documents. Now in the UK: <b>{{ ukNow }}</b> · <a href="#" @click.prevent="startNow">Start now</a></p>
 
         <div class="durations">
           <span class="durations-label">Quick duration</span>
@@ -150,9 +151,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '~/stores/auth'
 import { api } from '~/utils/api'
+import { fmtDateTime, splitDateTime, timeUntil, ukToInstant, nowInUK } from '~/utils/format'
 
 definePageMeta({ layout: 'admin' })
 useHead({ title: 'Create Policy' })
@@ -196,28 +198,37 @@ const summaryText = computed(() => {
   const s = policy.value.start_date && `${policy.value.start_date}T${policy.value.start_time || '00:00'}`
   const e = policy.value.end_date && `${policy.value.end_date}T${policy.value.end_time || '00:00'}`
   if (!s || !e) return ''
-  const ms = new Date(e) - new Date(s)
-  if (isNaN(ms)) return ''
+  // The typed times are UK wall clock, not the agent's local time
+  const si = ukToInstant(policy.value.start_date, policy.value.start_time)
+  const ei = ukToInstant(policy.value.end_date, policy.value.end_time)
+  if (!si || !ei) return ''
+  const ms = ei.getTime() - si.getTime()
   if (ms <= 0) return 'End must be after start.'
   const h = Math.round(ms / 3600000)
   const dur = h < 24 ? `${h} hour${h === 1 ? '' : 's'}` : `${Math.floor(h / 24)} day${Math.floor(h / 24) === 1 ? '' : 's'}${h % 24 ? ` ${h % 24}h` : ''}`
-  return `Cover runs for ${dur}${policy.value.price ? ` · £${Number(policy.value.price).toFixed(2)}` : ''}`
+  const until = timeUntil(si.toISOString())
+  return `Cover runs for ${dur}${policy.value.price ? ` · £${Number(policy.value.price).toFixed(2)}` : ''}${until ? ` · ${until}` : ' · starts immediately'}`
 })
 
-function pad(n) { return String(n).padStart(2, '0') }
+// Live UK clock for the hint, so an agent outside the UK sees what "now" means here
+const ukNow = ref(fmtDateTime(new Date().toISOString()))
+const ukTick = setInterval(() => { ukNow.value = fmtDateTime(new Date().toISOString()) }, 30000)
+onUnmounted(() => clearInterval(ukTick))
+
+function startNow() {
+  const n = nowInUK(5)
+  policy.value.start_date = n.date
+  policy.value.start_time = n.time
+}
 
 function applyDuration(d) {
-  // Default the start to now (rounded to the next 5 minutes) when it is empty
-  if (!policy.value.start_date || !policy.value.start_time) {
-    const now = new Date()
-    now.setMinutes(Math.ceil(now.getMinutes() / 5) * 5, 0, 0)
-    policy.value.start_date = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
-    policy.value.start_time = `${pad(now.getHours())}:${pad(now.getMinutes())}`
-  }
-  const start = new Date(`${policy.value.start_date}T${policy.value.start_time}`)
-  const end = new Date(start.getTime() + d.hours * 3600000)
-  policy.value.end_date = `${end.getFullYear()}-${pad(end.getMonth() + 1)}-${pad(end.getDate())}`
-  policy.value.end_time = `${pad(end.getHours())}:${pad(end.getMinutes())}`
+  // Default the start to now in the UK (rounded to the next 5 minutes) when it is empty
+  if (!policy.value.start_date || !policy.value.start_time) startNow()
+  const start = ukToInstant(policy.value.start_date, policy.value.start_time)
+  if (!start) return
+  const end = splitDateTime(new Date(start.getTime() + d.hours * 3600000).toISOString())
+  policy.value.end_date = end.date
+  policy.value.end_time = end.time
 }
 
 async function loadSavedData() {
@@ -355,4 +366,6 @@ onMounted(loadSavedData)
 @media (max-width: 640px) {
   .section-actions .g-btn { width: 100%; }
 }
+.uk-hint { margin: -0.25rem 0 1rem; font-size: 0.8rem; color: var(--text-muted); }
+.uk-hint a { color: var(--brand-600); font-weight: 600; }
 </style>

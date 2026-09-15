@@ -75,3 +75,27 @@ export function timeUntil(iso?: string | null): string {
   const m = Math.floor((ms % 3600000) / 60000)
   return h >= 1 ? `starts in ${h}h ${m}m` : `starts in ${m}m`
 }
+
+/** UK wall clock ('YYYY-MM-DD', 'HH:MM') -> instant; handles GMT/BST. null if malformed. */
+export function ukToInstant(date: string, time: string): Date | null {
+  const [y, mo, d] = (date || '').split('-').map(Number)
+  const [h, mi] = (time || '00:00').split(':').map(Number)
+  if (!y || !mo || !d || isNaN(h) || isNaN(mi)) return null
+  const wanted = Date.UTC(y, mo - 1, d, h, mi)
+  let guess = wanted
+  for (let i = 0; i < 2; i++) {            // twice: the offset can change across a DST edge
+    const r = splitDateTime(new Date(guess).toISOString())
+    const [ry, rm, rd] = r.date.split('-').map(Number)
+    const [rh, rmi] = r.time.split(':').map(Number)
+    guess += wanted - Date.UTC(ry, rm - 1, rd, rh, rmi)
+  }
+  return new Date(guess)
+}
+
+/** The current UK time as form values, rounded up to the next `stepMin` minutes */
+export function nowInUK(stepMin = 5): { date: string; time: string } {
+  const now = new Date()
+  now.setSeconds(0, 0)
+  now.setMinutes(Math.ceil(now.getMinutes() / stepMin) * stepMin)
+  return splitDateTime(now.toISOString())
+}

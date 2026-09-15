@@ -16,10 +16,10 @@
       <section class="g-section">
         <div class="g-section-title">Cover Period & Price</div>
         <div class="g-form-grid" style="margin-bottom:0;">
-          <div class="g-field"><label>Start date *</label><input v-model="policy.start_date" type="date" /></div>
-          <div class="g-field"><label>Start time *</label><input v-model="policy.start_time" type="time" /></div>
-          <div class="g-field"><label>End date *</label><input v-model="policy.end_date" type="date" /></div>
-          <div class="g-field"><label>End time *</label><input v-model="policy.end_time" type="time" /></div>
+          <div class="g-field"><label>Start date (UK time) *</label><input v-model="policy.start_date" type="date" /></div>
+          <div class="g-field"><label>Start time (UK time) *</label><input v-model="policy.start_time" type="time" /></div>
+          <div class="g-field"><label>End date (UK time) *</label><input v-model="policy.end_date" type="date" /></div>
+          <div class="g-field"><label>End time (UK time) *</label><input v-model="policy.end_time" type="time" /></div>
           <div class="g-field"><label>Price (£) *</label><input v-model="policy.price" type="number" step="0.01" min="0" /></div>
           <div class="g-field">
             <label>Cover type *</label>

@@ -85,10 +85,11 @@
       <div class="section-card">
         <h2 class="section-title">3. Policy Details</h2>
         <div class="form-grid">
-          <div class="field"><label>Start Date *</label><input v-model="policy.start_date" type="date" /></div>
-          <div class="field"><label>Start Time *</label><input v-model="policy.start_time" type="time" /></div>
-          <div class="field"><label>End Date *</label><input v-model="policy.end_date" type="date" /></div>
-          <div class="field"><label>End Time *</label><input v-model="policy.end_time" type="time" /></div>
+          <div class="field"><label>Start Date (UK time) *</label><input v-model="policy.start_date" type="date" /></div>
+          <div class="field"><label>Start Time (UK time) *</label><input v-model="policy.start_time" type="time" /></div>
+          <div class="field"><label>End Date (UK time) *</label><input v-model="policy.end_date" type="date" /></div>
+          <div class="field"><label>End Time (UK time) *</label><input v-model="policy.end_time" type="time" /></div>
+          <p class="field full-width uk-hint">Cover times are UK time (London), as printed on the documents. Now in the UK: <b>{{ ukNow }}</b> · <a href="#" @click.prevent="startNow">Start now</a></p>
           <div class="field full-width"><label>Policy Price (£) *</label><input v-model="policy.price" type="number" step="0.01" min="0" placeholder="0.00" /></div>
         </div>
       </div>
@@ -102,9 +103,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '~/stores/auth'
 import { api } from '~/utils/api'
+import { fmtDateTime, nowInUK } from '~/utils/format'
 
 definePageMeta({ layout: 'superadmin' })
 
@@ -128,6 +130,16 @@ const toast = ref({ show: false, message: '', type: 'success' })
 const driver = ref({ first_name:'', last_name:'', date_of_birth:'', driving_licence:'', mobile:'', email:'', address_line_1:'', city:'', postcode:'', occupation:'', sex:'' })
 const vehicle = ref({ registration:'', make:'', model:'', year:'', value_range:'' })
 const policy = ref({ start_date:'', start_time:'', end_date:'', end_time:'', price:'' })
+
+// Live UK clock for the hint, so an admin outside the UK sees what "now" means here
+const ukNow = ref(fmtDateTime(new Date().toISOString()))
+const ukTick = setInterval(() => { ukNow.value = fmtDateTime(new Date().toISOString()) }, 30000)
+onUnmounted(() => clearInterval(ukTick))
+function startNow() {
+  const n = nowInUK(5)
+  policy.value.start_date = n.date
+  policy.value.start_time = n.time
+}
 
 function showToast(msg, type='success') {
   toast.value = { show:true, message:msg, type }
@@ -251,4 +263,6 @@ onMounted(async () => {
 .btn-create:disabled { opacity: 0.6; cursor: not-allowed; }
 @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } .page-title { font-size: 1.3rem; } }
 @media (max-width: 480px) { .section-card { padding: 1.25rem 1rem; } }
+.uk-hint { font-size: 0.8rem; color: var(--text-muted); display: block; }
+.uk-hint a { color: var(--brand-600); font-weight: 600; }
 </style>
