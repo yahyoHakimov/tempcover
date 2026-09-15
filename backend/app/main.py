@@ -14,7 +14,6 @@ from fastapi.staticfiles import StaticFiles
 from app.config import settings
 from app.database import engine, Base
 from app.routers import auth, drivers, vehicles, policies, superadmin
-from app.routers.verify import router as verify_router
 from app.routers.pdf_router import router as pdf_router
 from app.services import lifecycle
 
@@ -68,7 +67,6 @@ app.include_router(vehicles.router,   prefix="/api/vehicles",   tags=["Vehicles"
 app.include_router(policies.router,   prefix="/api/policies",   tags=["Policies"])
 app.include_router(superadmin.router, prefix="/api/superadmin", tags=["Super Admin"])
 app.include_router(pdf_router)
-app.include_router(verify_router, prefix="/api/verify", tags=["Verify"])
 
 
 @app.get("/")

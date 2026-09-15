@@ -18,7 +18,7 @@ drivers receive their documents by email and view them in a self-service portal.
 | `/admin/drivers` | agent | saved drivers |
 | `/superadmin/**` | super admin | agents, all policies, drivers, static documents |
 | `/driver/login` | driver | sign in with policy no. + surname + date of birth |
-| `/verifydetailspolicy/complete/<policy no.>` | driver | policy details + documents (opened from the email link with `?t=<token>`, or after signing in) |
+| `/verifydetailspolicy/complete/<policy no.>` | driver | policy details + documents — only after signing in (the email button links to `/driver/login?ref=<policy no.>` with the number prefilled, like the original Tempcover) |
 | `/` | — | redirects to `/driver/login` |
 
 ## Local development
@@ -66,7 +66,7 @@ countdown). Agents sign in on the same page.
 
 | Event | What happens |
 |---|---|
-| Agent creates a policy | number `TCV-MOT-XXXXXXXX`; status `pending` if the start is in the future, else `active`; confirmation email with a one-click documents link |
+| Agent creates a policy | number `TCV-MOT-XXXXXXXX`; status `pending` if the start is in the future, else `active`; confirmation email whose documents button leads to the driver sign-in (surname + date of birth) |
 | Start time reached | background job flips `pending → active` (every `LIFECYCLE_TICK_SECONDS`) |
 | Agent edits dates/price/cover | mid-term adjustment: `version` +1, `reason_for_issue = MTA`, documents re-issued and emailed |
 | 24 h before the end | driver gets an expiry reminder (once); agents get a daily digest of policies ending within 3 days |

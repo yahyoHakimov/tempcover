@@ -67,14 +67,12 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { api } from '~/utils/api'
 
 definePageMeta({ layout: false })
 useHead({ title: 'Policy documents' })
 
 const route = useRoute()
 const policyRef = String(route.params.ref || '')
-const token = route.query.t ? String(route.query.t) : ''
 
 const data = ref(null)
 const loading = ref(true)
@@ -84,13 +82,9 @@ const status = computed(() => (data.value?.policy?.status || '').toLowerCase())
 
 onMounted(async () => {
   try {
-    if (token) {
-      // One-click link from the email: policy number in the URL + per-policy token
-      data.value = await api.get(`/api/verify/policy/${encodeURIComponent(policyRef)}?t=${encodeURIComponent(token)}`)
-      localStorage.setItem('driver_portal_data', JSON.stringify(data.value))
-      return
-    }
-    // Otherwise the driver must have signed in with policy number, surname and date of birth
+    // Hujjatlar faqat kirishdan keyin (polis raqami + familiya + tug'ilgan sana).
+    // Emaildagi tugma /driver/login?ref=... ga olib keladi; eski xatlardagi ?t= havolalar
+    // ham shu yerga yo'naltiriladi — token bilan so'roqsiz ochish yo'q.
     const stored = localStorage.getItem('driver_portal_data')
     const parsed = stored ? JSON.parse(stored) : null
     if (parsed?.policy?.policy_number === policyRef) {

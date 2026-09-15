@@ -21,9 +21,14 @@ def site_domain() -> str:
     return settings.APP_URL.split("://", 1)[-1].split("/", 1)[0]
 
 
-def documents_url(policy_number: str, verify_token: str) -> str:
-    """One-click link from the email to the driver's documents page."""
-    return f"{settings.APP_URL}/verifydetailspolicy/complete/{policy_number}?t={verify_token}"
+def documents_url(policy_number: str, verify_token: str = "") -> str:
+    """Emaildagi "View your policy documents" havolasi.
+
+    Asl Tempcover kabi hujjatlar so'roqsiz ochilmaydi: havola haydovchi kirish
+    sahifasiga olib boradi (polis raqami to'ldirilgan), familiya va tug'ilgan sana
+    so'raladi, keyingina hujjatlar ko'rsatiladi. verify_token endi ishlatilmaydi —
+    imzo mosligi uchun qoldirilgan."""
+    return f"{settings.APP_URL}/driver/login?ref={policy_number}"
 
 
 def legal_lines() -> list[str]:
