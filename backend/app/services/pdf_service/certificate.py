@@ -37,13 +37,13 @@ _EXCLUDING_TAIL = (
 LIMITATIONS_TO_USE = {
     "leisure": (
         "Use for social, domestic and pleasure purposes and use in person by the Policyholder in "
-        "connection with their business or profession <b>EXCLUDING</b> Commercial Travelling, hiring, "
+        "connection with their business or profession<br><b>EXCLUDING</b> Commercial Travelling, hiring, "
         "carriage of passengers or goods for hire and reward, " + _EXCLUDING_TAIL
     ),
     "business": (
         "Use for social, domestic and pleasure purposes and carriage of passengers or goods for hire "
         "and reward and use in person by the Policyholder in connection with their business or "
-        "profession <b>EXCLUDING</b> Commercial Travelling, hiring, " + _EXCLUDING_TAIL
+        "profession<br><b>EXCLUDING</b> Commercial Travelling, hiring, " + _EXCLUDING_TAIL
     ),
 }
 
