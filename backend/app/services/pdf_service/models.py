@@ -43,6 +43,7 @@ class PolicyData:
     reason_for_issue:   str = "New Business"
     agent_name:         str = ""
     version:            int = 1
+    usage:              str = "leisure"      # "leisure" | "business" — sertifikat (6)-bandi
 
     # ── Statement of Fact fields ─────────────────────────────────────────
     telephone:          str = ""

@@ -77,6 +77,11 @@ class PaymentStatus(str, PyEnum):
     REFUNDED = "refunded"
 
 
+class PolicyUsage(str, PyEnum):
+    LEISURE  = "leisure"
+    BUSINESS = "business"   # sertifikatda hire & reward ruxsat etiladi
+
+
 class ReasonForIssue(str, PyEnum):
     NEW_BUSINESS = "New Business"
     RENEWAL      = "Renewal"
@@ -232,6 +237,8 @@ class Policy(Base):
 
     cover_type      = Column(Enum(CoverType), default=CoverType.FULLY_COMPREHENSIVE)
     reason_for_issue = Column(Enum(ReasonForIssue), default=ReasonForIssue.NEW_BUSINESS)
+    usage           = Column(Enum(PolicyUsage, native_enum=False, length=20, values_callable=lambda e: [m.value for m in e]),
+                             default=PolicyUsage.LEISURE, server_default=PolicyUsage.LEISURE.value, nullable=False)
 
     compulsory_excess = Column(Numeric(10, 2), default=500.00)
     voluntary_excess  = Column(Numeric(10, 2), default=0.00)

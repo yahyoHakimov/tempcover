@@ -33,6 +33,10 @@
             <span>{{ data.policy.cover_type }}</span>
           </div>
           <div class="info-row">
+            <span class="label">Usage</span>
+            <span>{{ data.policy.usage === 'business' ? 'Business' : 'Leisure' }}</span>
+          </div>
+          <div class="info-row">
             <span class="label">Price</span>
             <span class="price">£{{ data.policy.price.toFixed(2) }}</span>
           </div>

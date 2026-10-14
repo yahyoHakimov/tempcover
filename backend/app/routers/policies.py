@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.dependencies import require_admin
-from app.models.models import Policy, Driver, Vehicle, PolicyStatus, CoverType
+from app.models.models import Policy, Driver, Vehicle, PolicyStatus, CoverType, PolicyUsage
 from app.services import policy_service as ps
 from app.services.branding import cover_label
 
@@ -34,6 +34,7 @@ class PolicyCreate(BaseModel):
     end_datetime: str
     price: float
     cover_type: CoverType = CoverType.FULLY_COMPREHENSIVE
+    usage: PolicyUsage = PolicyUsage.LEISURE
 
 
 class PolicyUpdate(BaseModel):
@@ -162,6 +163,7 @@ def create_policy(
         policy = ps.create_policy(
             db, tenant_id=tenant.id, driver_id=driver.id, vehicle_id=vehicle.id,
             start=start, end=end, price=data.price, cover_type=data.cover_type,
+            usage=data.usage,
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -198,6 +200,7 @@ def get_policy(
             "price":               float(policy.price),
             "cover_type":          policy.cover_type,
             "cover_label":         cover_label(policy.cover_type),
+            "usage":               policy.usage,
             "status":              policy.status,
             "email_sent":          policy.email_sent,
             "email_sent_at":       fmt_dt(policy.email_sent_at),

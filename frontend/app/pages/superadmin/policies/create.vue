@@ -90,6 +90,7 @@
           <div class="field"><label>End Date (UK time) *</label><input v-model="policy.end_date" type="date" /></div>
           <div class="field"><label>End Time (UK time) *</label><input v-model="policy.end_time" type="time" /></div>
           <p class="field full-width uk-hint">Cover times are UK time (London), as printed on the documents. Now in the UK: <b>{{ ukNow }}</b> · <a href="#" @click.prevent="startNow">Start now</a></p>
+          <div class="field full-width"><label>Usage *</label><select v-model="policy.usage"><option value="leisure">Leisure</option><option value="business">Business (incl. hire &amp; reward)</option></select></div>
           <div class="field full-width"><label>Policy Price (£) *</label><input v-model="policy.price" type="number" step="0.01" min="0" placeholder="0.00" /></div>
         </div>
       </div>
@@ -129,7 +130,7 @@ const toast = ref({ show: false, message: '', type: 'success' })
 
 const driver = ref({ first_name:'', last_name:'', date_of_birth:'', driving_licence:'', mobile:'', email:'', address_line_1:'', city:'', postcode:'', occupation:'', sex:'' })
 const vehicle = ref({ registration:'', make:'', model:'', year:'', value_range:'' })
-const policy = ref({ start_date:'', start_time:'', end_date:'', end_time:'', price:'' })
+const policy = ref({ start_date:'', start_time:'', end_date:'', end_time:'', price:'', usage:'leisure' })
 
 // Live UK clock for the hint, so an admin outside the UK sees what "now" means here
 const ukNow = ref(fmtDateTime(new Date().toISOString()))
@@ -211,6 +212,7 @@ async function createPolicy() {
       end_datetime: `${policy.value.end_date}T${policy.value.end_time || '00:00'}`,
       price: parseFloat(policy.value.price),
       cover_type: 'fully_comprehensive',
+      usage: policy.value.usage,
     }, auth.token)
     showToast(`Policy ${created.policy_number} created!`)
     setTimeout(() => navigateTo('/superadmin/policies'), 2000)

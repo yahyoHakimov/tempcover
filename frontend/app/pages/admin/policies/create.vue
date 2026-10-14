@@ -133,6 +133,13 @@
               <option value="third_party_only">Third Party Only</option>
             </select>
           </div>
+          <div class="g-field">
+            <label>Usage</label>
+            <select v-model="policy.usage">
+              <option value="leisure">Leisure</option>
+              <option value="business">Business (incl. hire &amp; reward)</option>
+            </select>
+          </div>
           <div class="g-field"><label>Price (£) *</label><input v-model="policy.price" type="number" step="0.01" min="0" placeholder="0.00" /></div>
         </div>
       </section>
@@ -187,7 +194,7 @@ const emptyVehicle = () => ({ registration:'', make:'', model:'', year:'', color
 
 const driver  = ref(emptyDriver())
 const vehicle = ref(emptyVehicle())
-const policy  = ref({ start_date:'', start_time:'', end_date:'', end_time:'', price:'', cover_type:'fully_comprehensive' })
+const policy  = ref({ start_date:'', start_time:'', end_date:'', end_time:'', price:'', cover_type:'fully_comprehensive', usage:'leisure' })
 
 function showToast(msg, type = 'success') {
   toast.value = { show: true, message: msg, type }
@@ -320,6 +327,7 @@ async function createPolicy() {
       end_datetime:   end,
       price:          parseFloat(policy.value.price),
       cover_type:     policy.value.cover_type,
+      usage:          policy.value.usage,
     }, auth.token)
     showToast(`Policy ${created.policy_number} created`)
     setTimeout(() => navigateTo(`/admin/policies/${created.id}`), 900)

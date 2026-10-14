@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.config import settings
 from app.database import SessionLocal
-from app.models.models import Policy, PolicyStatus, ReasonForIssue, CoverType
+from app.models.models import Policy, PolicyStatus, ReasonForIssue, CoverType, PolicyUsage
 from app.services import email_service
 
 DISPLAY_DT = "%A, %d %B %Y at %-I:%M %p"   # Friday, 11 September 2026 at 9:18 PM
@@ -89,6 +89,7 @@ def fmt_display(dt: datetime) -> str:
 def create_policy(
     db: Session, *, tenant_id, driver_id, vehicle_id,
     start: datetime, end: datetime, price: float, cover_type: CoverType,
+    usage: PolicyUsage = PolicyUsage.LEISURE,
 ) -> Policy:
     if end <= start:
         raise ValueError("End must be after start")
@@ -103,6 +104,7 @@ def create_policy(
             end_datetime=end,
             price=price,
             cover_type=cover_type,
+            usage=usage,
             status=status_for(start, end),
             verify_token=uuid.uuid4().hex[:32],
             email_sent=False,

@@ -67,6 +67,7 @@ class PDFService:
             policy_cover         = cover_label(policy.cover_type),
             agent_name           = policy.tenant.name if getattr(policy, "tenant", None) else "",
             version              = policy.version or 1,
+            usage                = policy.usage.value if hasattr(policy.usage, "value") else str(policy.usage or "leisure"),
         )
 
     @classmethod

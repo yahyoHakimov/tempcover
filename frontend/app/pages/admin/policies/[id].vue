@@ -47,6 +47,7 @@
         <div class="g-card">
           <div class="g-section-title">Cover</div>
           <div class="g-info-row"><span class="g-info-label">Cover type</span><span class="g-info-value">{{ data.policy.cover_label || coverLabel(data.policy.cover_type) }}</span></div>
+          <div class="g-info-row"><span class="g-info-label">Usage</span><span class="g-info-value">{{ data.policy.usage === 'business' ? 'Business' : 'Leisure' }}</span></div>
           <div class="g-info-row"><span class="g-info-label">Starts</span><span class="g-info-value">{{ fmtDateTimeLong(data.policy.start_datetime) }}</span></div>
           <div class="g-info-row"><span class="g-info-label">Ends</span><span class="g-info-value">{{ fmtDateTimeLong(data.policy.end_datetime) }}</span></div>
           <div class="g-info-row"><span class="g-info-label">Price</span><span class="g-info-value price">{{ fmtMoney(data.policy.price) }}</span></div>

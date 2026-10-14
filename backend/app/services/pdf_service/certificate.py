@@ -27,6 +27,27 @@ def _fmt_date(dt) -> str:
     return dt.strftime("%d %b %Y")
 
 
+# (6) Limitations to use — polis yaratilganda admin tanlagan "usage" bo'yicha.
+# Business: hire & reward ruxsat, shuning uchun EXCLUDING ro'yxatidan chiqariladi.
+_EXCLUDING_TAIL = (
+    "any purpose in connection with the Motor Trade, racing, pace-making, speed testing or "
+    "reliability testing or use on any race track, race circuit or toll road without a speed "
+    "limit including the Nurburgring."
+)
+LIMITATIONS_TO_USE = {
+    "leisure": (
+        "Use for social, domestic and pleasure purposes and use in person by the Policyholder in "
+        "connection with their business or profession <b>EXCLUDING</b> Commercial Travelling, hiring, "
+        "carriage of passengers or goods for hire and reward, " + _EXCLUDING_TAIL
+    ),
+    "business": (
+        "Use for social, domestic and pleasure purposes and carriage of passengers or goods for hire "
+        "and reward and use in person by the Policyholder in connection with their business or "
+        "profession <b>EXCLUDING</b> Commercial Travelling, hiring, " + _EXCLUDING_TAIL
+    ),
+}
+
+
 def _render(policy: PolicyData) -> str:
     template_path = os.path.join(TEMPLATE_DIR, "certificate.html")
     with open(template_path, "r", encoding="utf-8") as f:
@@ -40,6 +61,7 @@ def _render(policy: PolicyData) -> str:
         "{{ effective_datetime }}":   _fmt(policy.start_datetime),
         "{{ expiry_datetime }}":      _fmt(policy.end_datetime),
         "{{ claims_hotline }}":       settings.CLAIMS_HOTLINE,
+        "{{ limitations_to_use }}":   LIMITATIONS_TO_USE.get(policy.usage, LIMITATIONS_TO_USE["leisure"]),
         "{{ logo_fu }}":              f"file://{SIG_DIR}/first-underwriting.png",
         "{{ logo_tc_blue }}":         f"file://{SIG_DIR}/tempcover-logo-blue.png",
         "{{ sig_left }}":             f"file://{SIG_DIR}/sig_adam_cobourn.png",

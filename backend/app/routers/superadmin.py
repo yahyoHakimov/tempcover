@@ -19,7 +19,7 @@ from app.database import get_db
 from app.dependencies import require_super_admin
 from app.models.models import (
     Tenant, Policy, Driver, Vehicle, StaticDocument, Payment,
-    PolicyStatus, TenantStatus, TenantPlan, CoverType, VehicleValueRange
+    PolicyStatus, TenantStatus, TenantPlan, CoverType, VehicleValueRange, PolicyUsage
 )
 from app.utils.security import hash_password
 from app.services import policy_service as ps
@@ -114,6 +114,7 @@ class PolicyCreate(BaseModel):
     end_datetime: str
     price: float
     cover_type: CoverType = CoverType.FULLY_COMPREHENSIVE
+    usage: PolicyUsage = PolicyUsage.LEISURE
 
 
 class PolicyUpdate(BaseModel):
@@ -682,6 +683,7 @@ def create_policy(
             db, tenant_id=data.tenant_id, driver_id=data.driver_id, vehicle_id=data.vehicle_id,
             start=ps.parse_dt(data.start_datetime), end=ps.parse_dt(data.end_datetime),
             price=data.price, cover_type=data.cover_type,
+            usage=data.usage,
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -727,6 +729,7 @@ def get_policy_detail(
             "email_sent":        policy.email_sent,
             "issued_at":         fmt_dt(policy.issued_at),
             "cover_label":       cover_label(policy.cover_type),
+            "usage":             policy.usage,
             "version":           policy.version or 1,
             "cancelled_at":      fmt_dt(policy.cancelled_at) or None,
             "cancellation_reason": policy.cancellation_reason,
